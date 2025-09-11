@@ -51,7 +51,7 @@ class Texts {
 
   static const String recommendedForYou = "Recommended For you";
   static const String viewAll = "View all";
-  static const String popularProducts =  "Popular Products";
+  static const String popularProducts = "Popular Products";
 
   //product details screen
   static const String detailsScreen = "Product Details Screen";
@@ -59,12 +59,17 @@ class Texts {
   static const String description = "Step Into The Overview :";
   static const String addToCart = "Put In Box";
 
-
   //cart screen
-  static const String cartScreenNodata = "Your cart is empty start shopping \n  with SneakersX";
-  static const String shopNowButton ="Shop with SneakersX";
+  static const String cartScreenNodata =
+      "Your cart is empty start shopping \n  with SneakersX";
+  static const String shopNowButton = "Shop with SneakersX";
   static const String checkoutButton = "Checkout Order";
-   static const  subTotalPrice = "Your Total = ";
-   static const String favoriteText = "Favorite Items";
-  
+  static const subTotalPrice = "Your Total = ";
+  static const String favoriteText = "Favorite Items";
+
+  static const String checkoutScreen = "Checkout Your Shoes";
+  static const String paymentMethod = "Payment Method";
+  static const String stripe = "Visa Card";
+  static const String cashOnDevlivery = "Cash On Delivery";
+  static const String placeOrder = "Place Order";
 }

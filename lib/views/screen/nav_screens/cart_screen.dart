@@ -7,6 +7,7 @@ import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:shoe_app_assigment/views/screen/inner_screens/checkout_screen.dart';
 import 'package:shoe_app_assigment/views/screen/main_screen.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
@@ -339,7 +340,16 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                 ),
                 const SizedBox(width: TSizes.defaultSpace),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return CheckoutScreen();
+                        },
+                      ),
+                    );
+                  },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: TSizes.lg),
                     child: Text(
