@@ -16,6 +16,7 @@ class FavoriteScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dark = HelperFunctions.isDarkMode(context);
     final wishItemData = ref.watch(favoriteProvider);
+    final favoriteData = ref.read(favoriteProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
@@ -108,7 +109,14 @@ class FavoriteScreen extends ConsumerWidget {
                         Positioned(
                           top: 0,
                           right: 0,
-                          child: FavoriteIcon(dark: dark),
+                          child: IconButton(
+                            onPressed: () {
+                              favoriteData.removeShoeFromFavorite(
+                                wishItem.shoeId,
+                              );
+                            },
+                            icon: Icon(Icons.delete, color: TColors.red),
+                          ),
                         ),
                       ],
                     ),
