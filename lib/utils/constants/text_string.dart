@@ -72,4 +72,7 @@ class Texts {
   static const String stripe = "Visa Card";
   static const String cashOnDevlivery = "Cash On Delivery";
   static const String placeOrder = "Place Order";
+
+  static const String addAddress ="Add Address";
+  static const String enterCity = "Enter City";
 }

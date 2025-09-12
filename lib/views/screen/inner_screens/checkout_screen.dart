@@ -115,6 +115,83 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 );
               }),
               const SizedBox(height: TSizes.defaultSpace),
+
+              // ...existing code...
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                decoration: BoxDecoration(
+                  color: dark ? TColors.dark : TColors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.07),
+                      blurRadius: 12,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                  border: Border.all(color: TColors.borderLight),
+                ),
+                child: Row(
+                  children: [
+                    // Location icon
+                    Container(
+                      decoration: BoxDecoration(
+                        color: TColors.newBlue.withOpacity(0.12),
+                        shape: BoxShape.circle,
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.location_on,
+                        color: TColors.newBlue,
+                        size: 28,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    // Address info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            Texts.addAddress,
+                            style: Theme.of(context).textTheme.titleLarge!
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            Texts.enterCity,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Edit icon
+                    InkWell(
+                      onTap: () {
+                        // Handle edit action
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: TColors.newBlue.withOpacity(0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: Icon(
+                          Icons.edit,
+                          color: TColors.newBlue,
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // ...existing code...
+              const SizedBox(height: TSizes.defaultSpace),
               Text(
                 Texts.paymentMethod,
                 style: Theme.of(context).textTheme.headlineMedium,
@@ -163,25 +240,29 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     .doc(_auth.currentUser!.uid)
                     .get();
 
-              CollectionReference orderRefer = _firestore.collection('shoeOrders');
-              final orderId = const Uuid().v4();
-              await orderRefer.doc(orderId).set({
-                'orderId':orderId,
-                'shoeName':item.shoeName,
-                'shoeId':item.shoeId,
-                'shoeSizes':item.shoeSizes,
-                'quantity':item.quantity,
-                'shoePrice':item.quantity * item.shoePrice,
-                'shoeCategory':item.shoeCategory,
-                'shoeImage':item.imageUrl[0],
-                'State':(userDoc.data() as Map<String , dynamic>)['State'],
-                'email':(userDoc.data() as Map<String , dynamic>)['email'],
-                'locality':(userDoc.data() as Map<String , dynamic>)['locality'],
-                'fullName':(userDoc.data() as Map<String , dynamic>)['fullName'],
-                'buyerId':_auth.currentUser!.uid,
-                'delivered':false,
-                'processing':true,
-              });
+                CollectionReference orderRefer = _firestore.collection(
+                  'shoeOrders',
+                );
+                final orderId = const Uuid().v4();
+                await orderRefer.doc(orderId).set({
+                  'orderId': orderId,
+                  'shoeName': item.shoeName,
+                  'shoeId': item.shoeId,
+                  'shoeSizes': item.shoeSizes,
+                  'quantity': item.quantity,
+                  'shoePrice': item.quantity * item.shoePrice,
+                  'shoeCategory': item.shoeCategory,
+                  'shoeImage': item.imageUrl[0],
+                  'State': (userDoc.data() as Map<String, dynamic>)['State'],
+                  'email': (userDoc.data() as Map<String, dynamic>)['email'],
+                  'locality':
+                      (userDoc.data() as Map<String, dynamic>)['locality'],
+                  'fullName':
+                      (userDoc.data() as Map<String, dynamic>)['fullName'],
+                  'buyerId': _auth.currentUser!.uid,
+                  'delivered': false,
+                  'processing': true,
+                });
               }
             }
           },
@@ -191,6 +272,15 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(TSizes.sm),
               color: dark ? TColors.buttonPrimary : TColors.newBlue,
+            ),
+            child: Center(
+              child: Text(
+                Texts.placeOrder,
+                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                  color: dark ? TColors.dark : TColors.white,
+                  fontSize: 20,
+                ),
+              ),
             ),
           ),
         ),

@@ -78,7 +78,7 @@ class FavoriteScreen extends ConsumerWidget {
                             ),
                             child: Image.network(
                               wishItem.imageUrl[0],
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
