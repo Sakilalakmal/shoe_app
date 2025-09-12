@@ -8,6 +8,7 @@ import 'package:shoe_app_assigment/utils/constants/text_string.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
+import 'package:shoe_app_assigment/views/screen/inner_screens/shipping_address_screen.dart';
 import 'package:uuid/uuid.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
@@ -173,6 +174,14 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     InkWell(
                       onTap: () {
                         // Handle edit action
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return ShippingAddressScreen();
+                            },
+                          ),
+                        );
                       },
                       child: Container(
                         decoration: BoxDecoration(

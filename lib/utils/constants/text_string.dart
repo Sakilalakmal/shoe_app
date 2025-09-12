@@ -75,4 +75,6 @@ class Texts {
 
   static const String addAddress ="Add Address";
   static const String enterCity = "Enter City";
+
+  static const String deliveryAddress = "Delivery Address";
 }

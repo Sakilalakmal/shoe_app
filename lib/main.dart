@@ -8,7 +8,6 @@ import 'package:shoe_app_assigment/controllers/category_controller/category_cont
 import 'package:shoe_app_assigment/core/firebase/firebase_initializer.dart';
 import 'package:shoe_app_assigment/utils/theme/theme.dart';
 import 'package:shoe_app_assigment/views/authentication/user_login/login.dart';
-import 'package:shoe_app_assigment/views/screen/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
