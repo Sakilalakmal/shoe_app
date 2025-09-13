@@ -23,8 +23,8 @@ class ProductDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
+  String? selectedSize;
   @override
-
   Widget build(BuildContext context) {
     final _cartProvider = ref.read(cartProvider.notifier);
     final _favoriteProvider = ref.read(favoriteProvider.notifier);
@@ -45,8 +45,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 imageUrl: List<String>.from(widget.productData['shoeImages']),
                 shoePrice: widget.productData['shoePrice'],
                 shoeSizes: List<String>.from(widget.productData['shoeSizes']),
-                discount: widget.productData['discount'] ,
-                brandName: widget.productData['brandName']
+                discount: widget.productData['discount'],
+                brandName: widget.productData['brandName'],
               );
             },
             icon:
@@ -153,11 +153,20 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               const SizedBox(height: TSizes.defaultSpace),
               Wrap(
                 children: List<String>.from(widget.productData['shoeSizes'])
-                    .map((size) {
-                      return ShoeSizeChip(sizeLabel: size);
-                    })
+                    .map(
+                      (size) => ShoeSizeChip(
+                        sizeLabel: size,
+                        isSelected: selectedSize == size,
+                        onTap: () {
+                          setState(() {
+                            selectedSize = size;
+                          });
+                        },
+                      ),
+                    )
                     .toList(),
               ),
+
               const SizedBox(height: TSizes.defaultSpace),
               Text(
                 Texts.description,
@@ -185,7 +194,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               quantity: 1,
               inStock: widget.productData['quantity'],
               shoeId: widget.productData['shoeId'],
-              shoeSizes: List<String>.from(widget.productData['shoeSizes']),
+              shoeSizes: [selectedSize!],
               discount: widget.productData['discount'],
               shoeDescription: widget.productData['shoeDescription'],
             );

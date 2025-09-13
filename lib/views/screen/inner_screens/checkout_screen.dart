@@ -343,6 +343,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                             'buyerId': _auth.currentUser!.uid,
                             'delivered': false,
                             'processing': true,
+                            'createdAt':FieldValue.serverTimestamp(),
                           });
                         }
                       }

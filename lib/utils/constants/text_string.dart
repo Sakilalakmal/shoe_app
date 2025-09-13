@@ -86,4 +86,6 @@ class Texts {
   static const String locality = "Your locality";
   static const String setDeliveryAddress = "Set Delivery Address";
   static const String addDeliveryAddressToContinue = "Add delivery address to continue";
+
+  static const String myOrders = 'My shoe orders';
 }
