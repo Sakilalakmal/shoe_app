@@ -19,10 +19,11 @@ class AuthController {
         'email': email,
         'profileImage': "",
         'uid': userCredential.user!.uid,
-        'pinCode': "",
+        'zipCode': "",
         'locality': "",
         'city': "",
         "State": "",
+        'streetAddress': "",
       });
 
       res = "success";

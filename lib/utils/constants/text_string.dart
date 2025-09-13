@@ -73,8 +73,17 @@ class Texts {
   static const String cashOnDevlivery = "Cash On Delivery";
   static const String placeOrder = "Place Order";
 
-  static const String addAddress ="Add Address";
+  static const String addAddress = "Add Address";
   static const String enterCity = "Enter City";
 
   static const String deliveryAddress = "Delivery Address";
+  static const String deliveryAddressSubTitle =
+      "Where do you want your order \n to be delivered?";
+  static const String state = "Your State";
+  static const String city = "Your City";
+  static const String zipCode = "Your Zip Code";
+  static const String streetAddress = "Your Street Address";
+  static const String locality = "Your locality";
+  static const String setDeliveryAddress = "Set Delivery Address";
+  static const String addDeliveryAddressToContinue = "Add delivery address to continue";
 }
