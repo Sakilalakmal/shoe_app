@@ -104,7 +104,7 @@ class FavoriteScreen extends ConsumerWidget {
                           ),
                         ),
 
-                        // Favorite button
+                        // delete button
                         Positioned(
                           top: 0,
                           right: 0,

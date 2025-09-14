@@ -7,7 +7,7 @@ class CartModel {
    int quantity;
   final int inStock;
   final String shoeId;
-  final List<String> shoeSizes;
+  final String shoeSizes;
   final int discount;
   final String shoeDescription;
 

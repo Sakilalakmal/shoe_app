@@ -280,9 +280,76 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   horizontal: TSizes.defaultSpace,
                   vertical: TSizes.xl,
                 ),
-                child:InkWell(
+                child: InkWell(
+                  onTap: () async {},
+                  child: Container(
+                    height: TSizes.appBarHeight,
+                    width: HelperFunctions.screenWidth(),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(TSizes.sm),
+                      color: dark ? TColors.buttonPrimary : TColors.newBlue,
+                    ),
+                    child: Center(
+                      child: Text(
+                        Texts.addDeliveryAddressToContinue,
+                        style: Theme.of(context).textTheme.headlineMedium!
+                            .copyWith(
+                              color: dark ? TColors.dark : TColors.white,
+                              fontSize: 20,
+                            ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : Padding(
+                padding: EdgeInsets.all(TSizes.defaultSpace),
+                child: InkWell(
                   onTap: () async {
-                    },
+                    if (_selectedPaymentMethod == "stripe") {
+                      //pay with stripe
+                    } else {
+                      final cartEntries = ref.read(cartProvider).entries;
+                      for (var entry in cartEntries) {
+                        final item = entry.value;
+                        DocumentSnapshot userDoc = await _firestore
+                            .collection('buyers')
+                            .doc(_auth.currentUser!.uid)
+                            .get();
+
+                        CollectionReference orderRefer = _firestore.collection(
+                          'shoeOrders',
+                        );
+                        final orderId = const Uuid().v4();
+                        await orderRefer.doc(orderId).set({
+                          'orderId': orderId,
+                          'shoeName': item.shoeName,
+                          'shoeId': item.shoeId,
+                          'shoeSizes': item.shoeSizes,
+                          'quantity': item.quantity,
+                          'shoePrice': item.quantity * item.shoePrice,
+                          'shoeCategory': item.shoeCategory,
+                          'shoeImage': item.imageUrl[0],
+                          'State':
+                              (userDoc.data() as Map<String, dynamic>)['State'],
+                          'email':
+                              (userDoc.data() as Map<String, dynamic>)['email'],
+                          'locality':
+                              (userDoc.data()
+                                  as Map<String, dynamic>)['locality'],
+                          'fullName':
+                              (userDoc.data()
+                                  as Map<String, dynamic>)['fullName'],
+                          'buyerId': _auth.currentUser!.uid,
+                          'delivered': false,
+                          'processing': true,
+                          'createdAt': FieldValue.serverTimestamp(),
+                        });
+                      }
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: TSizes.xl),
                     child: Container(
                       height: TSizes.appBarHeight,
                       width: HelperFunctions.screenWidth(),
@@ -292,7 +359,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          Texts.addDeliveryAddressToContinue,
+                          Texts.placeOrder,
                           style: Theme.of(context).textTheme.headlineMedium!
                               .copyWith(
                                 color: dark ? TColors.dark : TColors.white,
@@ -302,74 +369,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       ),
                     ),
                   ),
-              )
-            : Padding(
-                padding: EdgeInsets.all(TSizes.defaultSpace),
-                child: InkWell(
-                  onTap: () async {
-                    if (_selectedPaymentMethod == "stripe") {
-                      //pay with stripe
-                    } else {
-                        for (var item
-                            in ref.read(cartProvider.notifier).getCartItem.values) {
-                          DocumentSnapshot userDoc = await _firestore
-                              .collection('buyers')
-                              .doc(_auth.currentUser!.uid)
-                              .get();
-        
-                          CollectionReference orderRefer = _firestore.collection(
-                            'shoeOrders',
-                          );
-                          final orderId = const Uuid().v4();
-                          await orderRefer.doc(orderId).set({
-                            'orderId': orderId,
-                            'shoeName': item.shoeName,
-                            'shoeId': item.shoeId,
-                            'shoeSizes': item.shoeSizes,
-                            'quantity': item.quantity,
-                            'shoePrice': item.quantity * item.shoePrice,
-                            'shoeCategory': item.shoeCategory,
-                            'shoeImage': item.imageUrl[0],
-                            'State':
-                                (userDoc.data() as Map<String, dynamic>)['State'],
-                            'email':
-                                (userDoc.data() as Map<String, dynamic>)['email'],
-                            'locality':
-                                (userDoc.data()
-                                    as Map<String, dynamic>)['locality'],
-                            'fullName':
-                                (userDoc.data()
-                                    as Map<String, dynamic>)['fullName'],
-                            'buyerId': _auth.currentUser!.uid,
-                            'delivered': false,
-                            'processing': true,
-                            'createdAt':FieldValue.serverTimestamp(),
-                          });
-                        }
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: TSizes.xl),
-                      child: Container(
-                        height: TSizes.appBarHeight,
-                        width: HelperFunctions.screenWidth(),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(TSizes.sm),
-                          color: dark ? TColors.buttonPrimary : TColors.newBlue,
-                        ),
-                        child: Center(
-                          child: Text(
-                            Texts.placeOrder,
-                            style: Theme.of(context).textTheme.headlineMedium!
-                                .copyWith(
-                                  color: dark ? TColors.dark : TColors.white,
-                                  fontSize: 20,
-                                ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                ),
               ),
       ),
     );

@@ -184,7 +184,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
       bottomNavigationBar: Padding(
         padding: EdgeInsetsGeometry.all(TSizes.defaultSpace),
         child: ElevatedButton(
-          onPressed: () {
+          onPressed: selectedSize == null || selectedSize!.isEmpty ? null : () {
             _cartProvider.addShoesToCart(
               shoeName: widget.productData['shoeName'],
               brandName: widget.productData['brandName'],
@@ -194,7 +194,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               quantity: 1,
               inStock: widget.productData['quantity'],
               shoeId: widget.productData['shoeId'],
-              shoeSizes: [selectedSize!],
+              shoeSizes: selectedSize ?? "",
               discount: widget.productData['discount'],
               shoeDescription: widget.productData['shoeDescription'],
             );

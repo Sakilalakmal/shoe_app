@@ -269,6 +269,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                             onPressed: () {
                                               _cartProvider.decrementQuantity(
                                                 cartItem.shoeId,
+                                                cartItem.shoeSizes,
                                               );
                                             },
                                             icon: Icon(Iconsax.minus5),
@@ -283,6 +284,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                             onPressed: () {
                                               _cartProvider.incrementQuantity(
                                                 cartItem.shoeId,
+                                                cartItem.shoeSizes,
                                               );
                                             },
                                             icon: Icon(Iconsax.add5),
@@ -296,6 +298,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                       onPressed: () {
                                         _cartProvider.removeShoesFromCart(
                                           cartItem.shoeId,
+                                          cartItem.shoeSizes,
                                         );
                                       },
                                       icon: Icon(

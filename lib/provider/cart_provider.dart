@@ -7,7 +7,7 @@ final cartProvider = StateNotifierProvider<CartNotifier , Map<String , CartModel
 class CartNotifier extends StateNotifier<Map<String, CartModel>> {
   CartNotifier() : super({});
 
-  void addShoesToCart({
+void addShoesToCart({
     required String shoeName,
     required String brandName,
     required int shoePrice,
@@ -16,31 +16,32 @@ class CartNotifier extends StateNotifier<Map<String, CartModel>> {
     required int quantity,
     required int inStock,
     required String shoeId,
-    required List<String> shoeSizes,
+    required String shoeSizes, // still string for one-at-a-time
     required int discount,
     required String shoeDescription,
   }) {
-    if (state.containsKey(shoeId)) {
+    final cartKey = "$shoeId-$shoeSizes";
+    if (state.containsKey(cartKey)) {
       state = {
         ...state,
-        shoeId: CartModel(
-          shoeName: state[shoeId]!.shoeName,
-          shoePrice: state[shoeId]!.shoePrice,
-          shoeCategory: state[shoeId]!.shoeCategory,
-          imageUrl: state[shoeId]!.imageUrl,
-          quantity: state[shoeId]!.quantity + 1,
-          shoeId: state[shoeId]!.shoeId,
-          shoeSizes: state[shoeId]!.shoeSizes,
-          discount: state[shoeId]!.discount,
-          shoeDescription: state[shoeId]!.shoeDescription,
-          inStock: state[shoeId]!.inStock,
-           brandName:state[shoeId]!.brandName,
+        cartKey: CartModel(
+          shoeName: state[cartKey]!.shoeName,
+          shoePrice: state[cartKey]!.shoePrice,
+          shoeCategory: state[cartKey]!.shoeCategory,
+          imageUrl: state[cartKey]!.imageUrl,
+          quantity: state[cartKey]!.quantity + 1,
+          shoeId: state[cartKey]!.shoeId,
+          shoeSizes: state[cartKey]!.shoeSizes,
+          discount: state[cartKey]!.discount,
+          shoeDescription: state[cartKey]!.shoeDescription,
+          inStock: state[cartKey]!.inStock,
+          brandName:state[cartKey]!.brandName,
         ),
       };
     } else {
       state = {
         ...state,
-        shoeId: CartModel(
+        cartKey: CartModel(
           shoeName: shoeName,
           shoePrice: shoePrice,
           shoeCategory: shoeCategory,
@@ -57,40 +58,36 @@ class CartNotifier extends StateNotifier<Map<String, CartModel>> {
     }
   }
 
-  //remove item from carts
-  void removeShoesFromCart(String shoeId) {
-    state.remove(shoeId);
-    
-    //notify listener to change state
-    state = {...state};
-  }
-
-  //function for increment
-  void incrementQuantity(String shoeId) {
-  if(state.containsKey(shoeId)){
-    state[shoeId]!.quantity++;
-  } 
-
+void removeShoesFromCart(String shoeId, String shoeSize) {
+  final cartKey = "$shoeId-$shoeSize";
+  state.remove(cartKey);
   state = {...state};
+}
+
+void incrementQuantity(String shoeId, String shoeSize) {
+  final cartKey = "$shoeId-$shoeSize";
+  if(state.containsKey(cartKey)){
+    state[cartKey]!.quantity++;
   }
+  state = {...state};
+}
 
-  //function for decrement
-  void decrementQuantity(String shoeId) {
-    if(state.containsKey(shoeId) && state[shoeId]!.quantity > 1){
-      state[shoeId]!.quantity--;
-    } 
-
-    state = {...state};
+void decrementQuantity(String shoeId, String shoeSize) {
+  final cartKey = "$shoeId-$shoeSize";
+  if(state.containsKey(cartKey) && state[cartKey]!.quantity > 1){
+    state[cartKey]!.quantity--;
   }
+  state = {...state};
+}
 
-  double calculateTotalAmount(){
-    double totalAmount = 0.0;
-    state.forEach((shoeId , cartItem){
-      totalAmount += cartItem.quantity * cartItem.shoePrice;
-    });
+double calculateTotalAmount() {
+  double totalAmount = 0.0;
+  state.forEach((shoeId, cartItem) {
+    totalAmount += cartItem.quantity * cartItem.shoePrice;
+  });
+  return totalAmount;
+}
 
-    return totalAmount;
-  }
 
   //getter method for getting shoes data
   Map<String , CartModel> get getCartItem => state;

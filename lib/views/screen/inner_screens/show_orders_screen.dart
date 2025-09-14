@@ -50,32 +50,13 @@ class _ShowOrdersScreenState extends State<ShowOrdersScreen> {
                 final order = snapshot.data!.docs[index];
                 final data = order.data() as Map<String, dynamic>;
 
-                // Fix for shoeSizes - Properly convert to List<String>
-                List<String> shoeSizes = [];
-
-                // Handle different scenarios of shoeSizes data
-                if (data['shoeSizes'] != null) {
-                  if (data['shoeSizes'] is List) {
-                    // Convert each item to string
-                    shoeSizes = (data['shoeSizes'] as List)
-                        .map((size) => size.toString())
-                        .toList();
-                  } else if (data['shoeSizes'] is String) {
-                    // If it's a single string, add it to the list
-                    shoeSizes = [data['shoeSizes']];
-                  }
-                } else {
-                  // Default if shoeSizes is null
-                  shoeSizes = ['N/A'];
-                }
-
                 return ShoeOrderCard(
                   // Safe way to access the image URL
                   shoeImage:data['shoeImage'] ?? "",
                   shoeName: data['shoeName'] ?? 'Unnamed Product',
                   shoeCategory: data['shoeCategory'] ?? 'Shoes',
                   quantity: data['quantity'] ?? 1,
-                  shoeSizes: shoeSizes, // Use the properly converted list
+                  shoeSizes: data['shoeSizes'] ?? 'N/A',
                   shoePrice: (data['shoePrice'] ?? 0).toDouble(),
                   orderId: data['orderId'] ?? '',
                   createdAt: (data['createdAt'] as Timestamp).toDate(),

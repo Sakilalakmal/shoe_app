@@ -3,13 +3,14 @@ import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
+import 'package:shoe_app_assigment/views/screen/inner_screens/order_details_screen.dart';
 
 class ShoeOrderCard extends StatelessWidget {
   final String shoeImage;
   final String shoeName;
   final String shoeCategory;
   final int quantity;
-  final List<String> shoeSizes;
+  final String shoeSizes;
   final double shoePrice;
   final String orderId;
   final DateTime createdAt;
@@ -39,7 +40,7 @@ class ShoeOrderCard extends StatelessWidget {
     String status;
     Color badgeColor;
     IconData statusIcon;
-    
+
     if (delivered) {
       status = "Delivered";
       badgeColor = Colors.green.shade600;
@@ -71,13 +72,16 @@ class ShoeOrderCard extends StatelessWidget {
                 // Order ID
                 Text(
                   "Order #${orderId.substring(0, 6)}",
-                  style:Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    fontSize: 13,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium!.copyWith(fontSize: 13),
                 ),
                 // Status badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: badgeColor.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(12),
@@ -85,11 +89,7 @@ class ShoeOrderCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        statusIcon,
-                        size: 16,
-                        color: badgeColor,
-                      ),
+                      Icon(statusIcon, size: 16, color: badgeColor),
                       const SizedBox(width: 4),
                       Text(
                         status,
@@ -105,7 +105,7 @@ class ShoeOrderCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Product details section
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,15 +117,15 @@ class ShoeOrderCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     child: Image.network(
                       shoeImage,
-                      width:TSizes.productImageSize,
+                      width: TSizes.productImageSize,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Container(
-                        width: 100, height: 100,
+                        width: 100,
+                        height: 100,
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        
                       ),
                     ),
                   ),
@@ -138,9 +138,9 @@ class ShoeOrderCard extends StatelessWidget {
                     children: [
                       Text(
                         shoeName,
-                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                          fontSize: 15,
-                        ),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.headlineMedium!.copyWith(fontSize: 15),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -148,17 +148,21 @@ class ShoeOrderCard extends StatelessWidget {
 
                       // Category chip
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.blue.withOpacity(0.08),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           shoeCategory,
-                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                            color: Colors.blue.shade700,
-                            fontSize: 12
-                          )
+                          style: Theme.of(context).textTheme.bodyLarge!
+                              .copyWith(
+                                color: Colors.blue.shade700,
+                                fontSize: 12,
+                              ),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -166,7 +170,7 @@ class ShoeOrderCard extends StatelessWidget {
                       // Size and quantity
                       Row(
                         children: [
-                          _buildInfoItem(context, "Size" , shoeSizes.join(', ')),
+                          _buildInfoItem(context, "Size", shoeSizes),
                           const SizedBox(width: 16),
                           _buildInfoItem(context, "Qty", quantity.toString()),
                         ],
@@ -176,7 +180,8 @@ class ShoeOrderCard extends StatelessWidget {
                       // Price with bold styling
                       Text(
                         "\$${shoePrice.toStringAsFixed(2)}",
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
                               fontWeight: FontWeight.w800,
                               color: TColors.newBlue,
                             ),
@@ -186,13 +191,13 @@ class ShoeOrderCard extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             // Divider
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Divider(color: TColors.darkGrey),
             ),
-            
+
             // Order date
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -207,9 +212,56 @@ class ShoeOrderCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       "Ordered on: $formattedDate",
-                      style: Theme.of(context).textTheme.bodyMedium
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
+                ),
+                // View Details button (optional)
+                TextButton(
+                  onPressed: () {
+                    // View order details action
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return OrderDetailsScreen(
+                            orderData: {
+                              'shoeImage': shoeImage,
+                              'shoeName': shoeName,
+                              'shoeCategory': shoeCategory,
+                              'quantity': quantity,
+                              'shoeSizes': shoeSizes,
+                              'shoePrice': shoePrice,
+                              'orderId': orderId,
+                              'createdAt': createdAt,
+                              'delivered': delivered,
+                              'processing': processing,
+                            },
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Details",
+                        style: TextStyle(
+                          color: TColors.newBlue,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right,
+                        size: 18,
+                        color: TColors.newBlue,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -223,14 +275,8 @@ class ShoeOrderCard extends StatelessWidget {
   Widget _buildInfoItem(BuildContext context, String label, String value) {
     return Row(
       children: [
-        Text(
-          "$label: ",
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
+        Text("$label: ", style: Theme.of(context).textTheme.bodyLarge),
+        Text(value, style: Theme.of(context).textTheme.bodyMedium),
       ],
     );
   }

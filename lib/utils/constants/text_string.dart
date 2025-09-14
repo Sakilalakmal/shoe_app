@@ -88,4 +88,5 @@ class Texts {
   static const String addDeliveryAddressToContinue = "Add delivery address to continue";
 
   static const String myOrders = 'My shoe orders';
+  static const String orderDetails = 'Check on Your Orders';
 }
