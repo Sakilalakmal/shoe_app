@@ -6,6 +6,7 @@ import 'package:get/route_manager.dart';
 import 'package:shoe_app_assigment/controllers/category_controller/category_controller.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
+import 'package:shoe_app_assigment/views/screen/inner_screens/category_product_screen.dart';
 
 class CategoryItem extends StatefulWidget {
   const CategoryItem({super.key});
@@ -32,27 +33,44 @@ class _CategoryItemState extends State<CategoryItem> {
               child: Column(
                 children: [
                   //category icon container
-                  Container(
-                    width: TSizes.categoryHeight,
-                    height: TSizes.categoryHeight,
-                    padding: const EdgeInsets.all(TSizes.sm),
-                    decoration: BoxDecoration(
-                      color: TColors.white,
-                      borderRadius: BorderRadius.circular(
-                        TSizes.borderRadiusFull,
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return CategoryProductScreen(
+                              categoryModels:
+                                  _categoryController.categories[index],
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: TSizes.categoryHeight,
+                      height: TSizes.categoryHeight,
+                      padding: const EdgeInsets.all(TSizes.sm),
+                      decoration: BoxDecoration(
+                        color: TColors.white,
+                        borderRadius: BorderRadius.circular(
+                          TSizes.borderRadiusFull,
+                        ),
                       ),
-                    ),
-                    child: Center(
-                      child: CachedNetworkImage(
-                        imageUrl:
-                            _categoryController.categories[index].categoryImage,
-                        fit: BoxFit.cover,
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) =>
-                                CircularProgressIndicator(
-                                  value: downloadProgress.progress,
-                                ),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      child: Center(
+                        child: CachedNetworkImage(
+                          imageUrl: _categoryController
+                              .categories[index]
+                              .categoryImage,
+                          fit: BoxFit.cover,
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) =>
+                                  CircularProgressIndicator(
+                                    value: downloadProgress.progress,
+                                  ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                        ),
                       ),
                     ),
                   ),

@@ -21,6 +21,8 @@ class ShoeOrderCard extends StatelessWidget {
   final String State;
   final String streetAddress;
   final String zipCode;
+  final String email;
+  final String shoeId;
 
   const ShoeOrderCard({
     Key? key,
@@ -39,6 +41,8 @@ class ShoeOrderCard extends StatelessWidget {
     required this.State,
     required this.streetAddress,
     required this.zipCode,
+    required this.email,
+    required this.shoeId,
   }) : super(key: key);
 
   @override
@@ -251,6 +255,8 @@ class ShoeOrderCard extends StatelessWidget {
                               'createdAt': createdAt,
                               'delivered': delivered,
                               'processing': processing,
+                              'email': email,
+                              'shoeId': shoeId,
                             },
                           );
                         },

@@ -67,6 +67,8 @@ class _ShowOrdersScreenState extends State<ShowOrdersScreen> {
                   State: data['State'] ?? 'N/A',
                   streetAddress: data['streetAddress'] ?? '83/1 main road , flower street',
                   zipCode: data['zipCode'] ?? '1190',
+                  email: data['email'] ?? 'N/A',
+                  shoeId: data['shoeId'] ?? 'N/A',
                 );
               } catch (e) {
                 print("Error rendering order card: $e");

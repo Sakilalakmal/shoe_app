@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get_instance/src/bindings_interface.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/instance_manager.dart';
-import 'package:get/utils.dart';
 import 'package:shoe_app_assigment/controllers/category_controller/category_controller.dart';
 import 'package:shoe_app_assigment/core/firebase/firebase_initializer.dart';
 import 'package:shoe_app_assigment/utils/theme/theme.dart';
