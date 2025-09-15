@@ -36,32 +36,78 @@ class AccountScreen extends StatelessWidget {
                     SizedBox(height: statusBarHeight + 10),
 
                     // Profile Image
-                    Container(
-                      decoration: BoxDecoration(
-                        color: TColors.white,
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(color: TColors.primary, width: 4),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            spreadRadius: 1,
+                    // Profile Image
+                    Stack(
+                      children: [
+                        // Existing profile image container
+                        Container(
+                          decoration: BoxDecoration(
+                            color: TColors.white,
+                            borderRadius: BorderRadius.circular(100),
+                            border: Border.all(
+                              color: TColors.primary,
+                              width: 4,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 10,
+                                spreadRadius: 1,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Colors.transparent,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: Image.asset(
-                            'assets/images/account.jpg', // Make sure this is in pubspec.yaml
-                            fit: BoxFit.cover,
-                            width: 120,
-                            height: 120,
+                          child: CircleAvatar(
+                            radius: 60,
+                            backgroundColor: Colors.transparent,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: Image.asset(
+                                'assets/images/account.jpg',
+                                fit: BoxFit.cover,
+                                width: 120,
+                                height: 120,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+
+                        // Camera icon button overlay
+                        Positioned(
+                          right: 5,
+                          bottom: 5,
+                          child: GestureDetector(
+                            onTap: () {
+                              // Add your image picker logic here
+                              print("Change profile picture");
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: TColors.newBlue,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: dark
+                                      ? TColors.darkContainer
+                                      : TColors.white,
+                                  width: 2,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 6,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                Iconsax.camera,
+                                color: TColors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
 
                     const SizedBox(height: TSizes.spaceBtwItems),

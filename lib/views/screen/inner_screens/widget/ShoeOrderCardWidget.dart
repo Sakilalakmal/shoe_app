@@ -16,6 +16,11 @@ class ShoeOrderCard extends StatelessWidget {
   final DateTime createdAt;
   final bool delivered;
   final bool processing;
+  final String locality;
+  final String fullName;
+  final String State;
+  final String streetAddress;
+  final String zipCode;
 
   const ShoeOrderCard({
     Key? key,
@@ -29,6 +34,11 @@ class ShoeOrderCard extends StatelessWidget {
     required this.createdAt,
     required this.delivered,
     required this.processing,
+    required this.locality,
+    required this.fullName,
+    required this.State,
+    required this.streetAddress,
+    required this.zipCode,
   }) : super(key: key);
 
   @override
@@ -226,6 +236,11 @@ class ShoeOrderCard extends StatelessWidget {
                         builder: (context) {
                           return OrderDetailsScreen(
                             orderData: {
+                              'locality': locality,
+                              'fullName': fullName,
+                              'State': State,
+                              'streetAddress': streetAddress,
+                              'zipCode': zipCode,
                               'shoeImage': shoeImage,
                               'shoeName': shoeName,
                               'shoeCategory': shoeCategory,

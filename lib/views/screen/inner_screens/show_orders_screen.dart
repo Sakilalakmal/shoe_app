@@ -62,6 +62,11 @@ class _ShowOrdersScreenState extends State<ShowOrdersScreen> {
                   createdAt: (data['createdAt'] as Timestamp).toDate(),
                   delivered: data['delivered'] ?? false,
                   processing: data['processing'] ?? false,
+                  locality: data['locality'] ?? 'N/A',
+                  fullName: data['fullName'] ?? 'N/A',
+                  State: data['State'] ?? 'N/A',
+                  streetAddress: data['streetAddress'] ?? '83/1 main road , flower street',
+                  zipCode: data['zipCode'] ?? '1190',
                 );
               } catch (e) {
                 print("Error rendering order card: $e");
