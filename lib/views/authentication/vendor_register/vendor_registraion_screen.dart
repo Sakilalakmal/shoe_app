@@ -9,6 +9,7 @@ import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/authentication/vendor_login/vendor_login.dart';
+import 'package:shoe_app_assigment/views/components/notify_message/motion_toast.dart';
 
 class VendorRegisterScreen extends StatefulWidget {
   @override
@@ -26,6 +27,37 @@ class _VendorRegisterScreenState extends State<VendorRegisterScreen> {
   late String password;
 
   bool _obscureText = true;
+
+  registerUser() async {
+    BuildContext localContext = context;
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await _vendorAuthController.registerNewUser(
+      email,
+      fullName,
+      password,
+    );
+    if (res == "success") {
+      Future.delayed(Duration.zero, () {
+        Navigator.push(
+          localContext,
+          MaterialPageRoute(
+            builder: (context) {
+              return VendorLoginScreen();
+            },
+          ),
+        );
+        AppToast.success(context, "You have become a vendor.");
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+
+      AppToast.error(context, res);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,10 +103,13 @@ class _VendorRegisterScreenState extends State<VendorRegisterScreen> {
                     children: [
                       //email
                       TextFormField(
-                        validator: (value){
-                          if(value!.isEmpty){
+                        onChanged: (value) {
+                          email = value;
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return "Please enter your vendor email";
-                          }else{
+                          } else {
                             return null;
                           }
                         },
@@ -86,10 +121,13 @@ class _VendorRegisterScreenState extends State<VendorRegisterScreen> {
                       SizedBox(height: TSizes.spaceBtwInputFields),
                       //password
                       TextFormField(
-                        validator: (value){
-                          if(value!.isEmpty){
+                        onChanged: (value) {
+                          fullName = value;
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return "Please enter your vendor fullname";
-                          }else{
+                          } else {
                             return null;
                           }
                         },
@@ -101,17 +139,30 @@ class _VendorRegisterScreenState extends State<VendorRegisterScreen> {
                       SizedBox(height: TSizes.spaceBtwInputFields),
                       //password
                       TextFormField(
-                        validator: (value){
-                          if(value!.isEmpty){
+                        obscureText: _obscureText,
+                        onChanged: (value) {
+                          password = value;
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return "Please enter your vendor password";
-                          }else{
+                          } else {
                             return null;
                           }
                         },
                         decoration: InputDecoration(
                           prefixIcon: Icon(Iconsax.password_check),
                           labelText: Texts.password,
-                          suffixIcon: Icon(Iconsax.eye_slash),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _obscureText = !_obscureText;
+                              });
+                            },
+                            icon: Icon(
+                              _obscureText ? Iconsax.eye_slash : Iconsax.eye,
+                            ),
+                          ),
                         ),
                       ),
                       SizedBox(height: TSizes.spaceBtwInputFields / 2),
@@ -141,18 +192,28 @@ class _VendorRegisterScreenState extends State<VendorRegisterScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            if(_formKey.currentState!.validate()){
-                              print("valid");
-                            }else{
-                              print("invalid");
+                            if (_formKey.currentState!.validate()) {
+                              registerUser();
+                            } else {
+                              AppToast.error(
+                                context,
+                                "Please fill all the fields.",
+                              );
                             }
                           },
-                          child: Text(
-                            Texts.signUp,
-                            style: Theme.of(context).textTheme.bodyLarge!.apply(
-                              color: dark ? TColors.dark : TColors.white,
-                            ),
-                          ),
+                          child: _isLoading
+                              ? CircularProgressIndicator(
+                                  color: TColors.cardBackgroundColor,
+                                )
+                              : Text(
+                                  Texts.signUp,
+                                  style: Theme.of(context).textTheme.bodyLarge!
+                                      .apply(
+                                        color: dark
+                                            ? TColors.dark
+                                            : TColors.white,
+                                      ),
+                                ),
                         ),
                       ),
                       SizedBox(height: TSizes.spaceBtwItems),

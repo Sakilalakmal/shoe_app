@@ -7,15 +7,60 @@ import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/authentication/vendor_register/vendor_registraion_screen.dart';
+import 'package:shoe_app_assigment/views/components/notify_message/motion_toast.dart';
+import 'package:shoe_app_assigment/views/screen/main_screen.dart';
+import 'package:shoe_app_assigment/views/vendor_side/main_vendor_screen.dart';
 
-class VendorLoginForm extends StatelessWidget {
+class VendorLoginForm extends StatefulWidget {
+  @override
+  State<VendorLoginForm> createState() => _VendorLoginFormState();
+}
+
+class _VendorLoginFormState extends State<VendorLoginForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final VendorAuthController _vendorAuthController = VendorAuthController();
 
   late String email;
+
   late String password;
+
   bool _obscureText = false;
+
+  bool _isLoading = false;
+
+  loginUser() async {
+    String res = await _vendorAuthController.loginUser(email, password);
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    if (res == "success") {
+      //navigate to main screen
+      Future.delayed(Duration.zero, () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return MainVendorScreen();
+            },
+          ),
+        );
+
+        AppToast.success(context, " Start Your Journey with sneakersX ...");
+      });
+    } else {
+      AppToast.error(context, "Login failed try again ...");
+      setState(() {
+        _isLoading = false;
+      });
+
+      Future.delayed(Duration.zero, () {
+        AppToast.error(context, res);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +73,13 @@ class VendorLoginForm extends StatelessWidget {
           children: [
             //email
             TextFormField(
-              validator: (value){
-                if(value!.isEmpty){
+              onChanged: (value) {
+                email = value;
+              },
+              validator: (value) {
+                if (value!.isEmpty) {
                   return "Please enter your vendor email";
-                }else{
+                } else {
                   return null;
                 }
               },
@@ -43,17 +91,28 @@ class VendorLoginForm extends StatelessWidget {
             SizedBox(height: TSizes.spaceBtwInputFields),
             //password
             TextFormField(
-              validator: (value){
-                if(value!.isEmpty){
+              obscureText: _obscureText,
+              onChanged: (value) {
+                password = value;
+              },
+              validator: (value) {
+                if (value!.isEmpty) {
                   return "Please enter your vendor password";
-                }else{
+                } else {
                   return null;
                 }
               },
               decoration: InputDecoration(
                 prefixIcon: Icon(Iconsax.password_check),
                 labelText: Texts.password,
-                suffixIcon: Icon(Iconsax.eye_slash),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                  icon: Icon(_obscureText ? Iconsax.eye_slash : Iconsax.eye),
+                ),
               ),
             ),
             SizedBox(height: TSizes.spaceBtwInputFields / 2),
@@ -81,18 +140,22 @@ class VendorLoginForm extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  if(_formKey.currentState!.validate()){
-                    print("valid");
-                  }else{
-                    print("invalid");
+                  if (_formKey.currentState!.validate()) {
+                    loginUser();
+                  } else {
+                    AppToast.error(context, "please fill all the fields");
                   }
                 },
-                child: Text(
-                  Texts.signIn,
-                  style: Theme.of(context).textTheme.bodyLarge!.apply(
-                    color: dark ? TColors.dark : TColors.white,
-                  ),
-                ),
+                child: _isLoading
+                    ? CircularProgressIndicator(
+                        color: TColors.cardBackgroundColor,
+                      )
+                    : Text(
+                        Texts.signIn,
+                        style: Theme.of(context).textTheme.bodyLarge!.apply(
+                          color: dark ? TColors.dark : TColors.white,
+                        ),
+                      ),
               ),
             ),
             SizedBox(height: TSizes.spaceBtwItems),
