@@ -122,7 +122,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   ),
                   const SizedBox(width: TSizes.spaceBtwItems),
                   Text(
-                    "\$${widget.productData['shoePrice']}",
+                    "\$${widget.productData['shoePrice'].toStringAsFixed(2)}",
                     style: Theme.of(
                       context,
                     ).textTheme.headlineMedium!.copyWith(fontSize: 22),
@@ -197,6 +197,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               shoeSizes: selectedSize ?? "",
               discount: widget.productData['discount'],
               shoeDescription: widget.productData['shoeDescription'],
+              vendorId: widget.productData['vendorId'],
             );
 
             AppToast.success(

@@ -30,7 +30,9 @@ class _MainVendorScreenState extends State<MainVendorScreen> {
     final isDark = HelperFunctions.isDarkMode(context);
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: pageIndex,
         selectedItemColor: isDark ? TColors.primary : TColors.newBlue,
+        unselectedItemColor: isDark ? TColors.white : TColors.black,
         onTap: (value){
           setState(() {
             pageIndex = value;
@@ -48,7 +50,7 @@ class _MainVendorScreenState extends State<MainVendorScreen> {
             label: "Uploads",
           ),
 
-          BottomNavigationBarItem(icon: Icon(Iconsax.edit5), label: "Edit"),
+          BottomNavigationBarItem(icon: Icon(Iconsax.edit_25), label: "Edit"),
 
           BottomNavigationBarItem(
             icon: Icon(Iconsax.profile_2user5),

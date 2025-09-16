@@ -10,6 +10,8 @@ class CartModel {
   final String shoeSizes;
   final int discount;
   final String shoeDescription;
+  final String vendorId;
+
 
   CartModel( 
      {
@@ -24,5 +26,6 @@ class CartModel {
     required this.shoeDescription,
      required this.inStock,
      required this.brandName,
+     required this.vendorId,
   });
 }

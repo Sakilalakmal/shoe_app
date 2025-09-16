@@ -19,6 +19,7 @@ void addShoesToCart({
     required String shoeSizes, // still string for one-at-a-time
     required int discount,
     required String shoeDescription,
+    required String vendorId,
   }) {
     final cartKey = "$shoeId-$shoeSizes";
     if (state.containsKey(cartKey)) {
@@ -36,6 +37,7 @@ void addShoesToCart({
           shoeDescription: state[cartKey]!.shoeDescription,
           inStock: state[cartKey]!.inStock,
           brandName:state[cartKey]!.brandName,
+          vendorId: state[cartKey]!.vendorId,
         ),
       };
     } else {
@@ -53,6 +55,7 @@ void addShoesToCart({
           shoeDescription: shoeDescription,
           inStock: inStock,
           brandName: brandName,
+          vendorId: vendorId,
         ),
       };
     }
