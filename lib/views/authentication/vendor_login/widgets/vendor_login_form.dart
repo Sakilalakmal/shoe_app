@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shoe_app_assigment/controllers/auth_controller/vendor_auth_controller.dart';
 import 'package:shoe_app_assigment/utils/constants/text_string.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
@@ -9,6 +10,12 @@ import 'package:shoe_app_assigment/views/authentication/vendor_register/vendor_r
 
 class VendorLoginForm extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final VendorAuthController _vendorAuthController = VendorAuthController();
+
+  late String email;
+  late String password;
+  bool _obscureText = false;
 
   @override
   Widget build(BuildContext context) {

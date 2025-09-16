@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shoe_app_assigment/controllers/auth_controller/vendor_auth_controller.dart';
 import 'package:shoe_app_assigment/utils/constants/image_string.dart';
 import 'package:shoe_app_assigment/utils/constants/text_string.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
@@ -9,8 +10,22 @@ import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/authentication/vendor_login/vendor_login.dart';
 
-class VendorRegisterScreen extends StatelessWidget {
+class VendorRegisterScreen extends StatefulWidget {
+  @override
+  State<VendorRegisterScreen> createState() => _VendorRegisterScreenState();
+}
+
+class _VendorRegisterScreenState extends State<VendorRegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final VendorAuthController _vendorAuthController = VendorAuthController();
+  bool _isLoading = false;
+
+  late String email;
+  late String fullName;
+  late String password;
+
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {

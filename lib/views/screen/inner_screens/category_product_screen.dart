@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:shoe_app_assigment/model/categoryModel/category_models.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/components/product_card_widget/product_card_widget.dart';
-import 'package:shoe_app_assigment/views/components/recommended_products/recommended_products_widget.dart';
 
 class CategoryProductScreen extends StatelessWidget {
   final CategoryModels categoryModels;
@@ -18,7 +17,12 @@ class CategoryProductScreen extends StatelessWidget {
         .where('shoeCategory', isEqualTo: categoryModels.categoryName)
         .snapshots();
     return Scaffold(
-      appBar: AppBar(title: Text("Category Screen")),
+      appBar: AppBar(
+        title: Text(
+          "${categoryModels.categoryName} Shoe Screen",
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _categoryProductStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -55,7 +59,6 @@ class CategoryProductScreen extends StatelessWidget {
               },
             ),
           );
-          ;
         },
       ),
     );
