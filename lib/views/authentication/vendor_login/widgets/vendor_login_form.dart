@@ -8,7 +8,6 @@ import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/authentication/vendor_register/vendor_registraion_screen.dart';
 import 'package:shoe_app_assigment/views/components/notify_message/motion_toast.dart';
-import 'package:shoe_app_assigment/views/screen/main_screen.dart';
 import 'package:shoe_app_assigment/views/vendor_side/main_vendor_screen.dart';
 
 class VendorLoginForm extends StatefulWidget {
