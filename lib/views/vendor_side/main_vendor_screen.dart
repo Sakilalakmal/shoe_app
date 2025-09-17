@@ -6,6 +6,7 @@ import 'package:shoe_app_assigment/views/vendor_side/earning_screen.dart';
 import 'package:shoe_app_assigment/views/vendor_side/edit_screen.dart';
 import 'package:shoe_app_assigment/views/vendor_side/profile_screen.dart';
 import 'package:shoe_app_assigment/views/vendor_side/upload_screen.dart';
+import 'package:shoe_app_assigment/views/vendor_side/vendor_order_screen.dart';
 
 class MainVendorScreen extends StatefulWidget {
   const MainVendorScreen({super.key});
@@ -20,6 +21,7 @@ class _MainVendorScreenState extends State<MainVendorScreen> {
  final  List<Widget> _pages = [
     EarningScreen(),
     UploadScreen(),
+    VendorOrderScreen(),
     EditScreen(),
     ProfileScreen(),
   ];
@@ -49,6 +51,8 @@ class _MainVendorScreenState extends State<MainVendorScreen> {
             icon: Icon(Iconsax.document_upload5),
             label: "Uploads",
           ),
+
+           BottomNavigationBarItem(icon: Icon(Iconsax.shopping_cart5), label: "Orders"),
 
           BottomNavigationBarItem(icon: Icon(Iconsax.edit_25), label: "Edit"),
 
