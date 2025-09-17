@@ -33,17 +33,6 @@ class _InnerVendorStoreState extends State<InnerVendorStore> {
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: _vendorProductStream,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Text('Something went wrong');
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          return StreamBuilder<QuerySnapshot>(
             stream: _vendorProductStream,
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) {
@@ -271,13 +260,11 @@ class _InnerVendorStoreState extends State<InnerVendorStore> {
                 ),
               );
             },
-          );
-        },
-      ),
-    );
+          ));
+        }
   }
 
-}
+
 
 
   class FavoriteIcon extends StatelessWidget {
