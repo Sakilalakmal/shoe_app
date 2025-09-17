@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
-import 'package:shoe_app_assigment/views/components/notify_message/motion_toast.dart';
 import 'package:shoe_app_assigment/views/vendor_side/vendor_order_details_screen.dart';
 
 class VendorOrderCard extends StatelessWidget {
@@ -495,7 +494,7 @@ class VendorOrderCard extends StatelessWidget {
     Color color,
     VoidCallback onTap,
   ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return ElevatedButton(
       onPressed: onTap,
       style: ElevatedButton.styleFrom(

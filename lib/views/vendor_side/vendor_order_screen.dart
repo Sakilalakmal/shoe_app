@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shoe_app_assigment/utils/constants/text_string.dart';
-import 'package:shoe_app_assigment/views/screen/inner_screens/widget/ShoeOrderCardWidget.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/widget/VendorOrderCard.dart';
 
 class VendorOrderScreen extends StatefulWidget {
