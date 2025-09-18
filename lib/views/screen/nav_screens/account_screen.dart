@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/show_orders_screen.dart';
+import 'package:shoe_app_assigment/views/screen/inner_screens/widget/profile_picture_widget.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({Key? key}) : super(key: key);
@@ -40,72 +42,13 @@ class AccountScreen extends StatelessWidget {
                     Stack(
                       children: [
                         // Existing profile image container
-                        Container(
-                          decoration: BoxDecoration(
-                            color: TColors.white,
-                            borderRadius: BorderRadius.circular(100),
-                            border: Border.all(
-                              color: TColors.primary,
-                              width: 4,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 10,
-                                spreadRadius: 1,
-                              ),
-                            ],
-                          ),
-                          child: CircleAvatar(
-                            radius: 60,
-                            backgroundColor: Colors.transparent,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(100),
-                              child: Image.asset(
-                                'assets/images/account.jpg',
-                                fit: BoxFit.cover,
-                                width: 120,
-                                height: 120,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // Camera icon button overlay
-                        Positioned(
-                          right: 5,
-                          bottom: 5,
-                          child: GestureDetector(
-                            onTap: () {
-                              // Add your image picker logic here
-                              print("Change profile picture");
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: TColors.newBlue,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: dark
-                                      ? TColors.darkContainer
-                                      : TColors.white,
-                                  width: 2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 6,
-                                    spreadRadius: 1,
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                Iconsax.camera,
-                                color: TColors.white,
-                                size: 20,
-                              ),
-                            ),
-                          ),
+                        ProfilePictureWidget(
+                          userId:
+                              FirebaseAuth.instance.currentUser!.uid, 
+                          borderColor: TColors.primary,
+                          backgroundColor: TColors.white,
+                          showCamera: true,
+                          radius: 60,
                         ),
                       ],
                     ),

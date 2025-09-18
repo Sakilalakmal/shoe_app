@@ -4,7 +4,7 @@ import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/views/vendor_side/earning_screen.dart';
 import 'package:shoe_app_assigment/views/vendor_side/edit_screen.dart';
-import 'package:shoe_app_assigment/views/vendor_side/profile_screen.dart';
+import 'package:shoe_app_assigment/views/vendor_side/vendor_profile_screen.dart';
 import 'package:shoe_app_assigment/views/vendor_side/upload_screen.dart';
 import 'package:shoe_app_assigment/views/vendor_side/vendor_order_screen.dart';
 
@@ -23,7 +23,7 @@ class _MainVendorScreenState extends State<MainVendorScreen> {
     UploadScreen(),
     VendorOrderScreen(),
     EditScreen(),
-    ProfileScreen(),
+    VendorProfileScreen(),
   ];
 
   @override

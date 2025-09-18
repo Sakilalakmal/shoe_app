@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shoe_app_assigment/utils/constants/text_string.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
@@ -20,6 +22,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  Future<Map<String, dynamic>?> getCurrentBuyerProfile() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    final doc = await FirebaseFirestore.instance.collection('buyers').doc(uid).get();
+    return doc.data();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,28 +41,37 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   TAppBar(
                     showActions: true,
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          Texts.mainScreenTitle,
-                          style: Theme.of(context).textTheme.headlineMedium!
-                              .apply(color: TColors.grey),
-                        ),
-                        Text(
-                          Texts.searchHintText,
-                          style: Theme.of(context).textTheme.headlineMedium!
-                              .apply(color: TColors.grey),
-                        ),
-                      ],
+                    title: FutureBuilder<Map<String, dynamic>?>(
+                      future: getCurrentBuyerProfile(),
+                      builder: (context, snapshot) {
+                        final data = snapshot.data;
+                        final String name = data?['fullName'] ?? 'Shopper';
+                        final String img = data?['profileImage'] ?? '';
+
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                              radius: 22,
+                              backgroundColor: Colors.white,
+                              backgroundImage: (img.isNotEmpty) ? NetworkImage(img) : null,
+                              child: (img.isEmpty)
+                                  ? Icon(Icons.person, size: 28, color: Colors.grey.shade400)
+                                  : null,
+                            ),
+                           const SizedBox(width: TSizes.defaultSpace,),
+                            Flexible(
+                              child: Text(
+                                'Good day for shopping,\n $name',
+                                style: Theme.of(context).textTheme.headlineMedium,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
-                    actions: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Iconsax.shop_add, size: TSizes.iconLg),
-                        color: TColors.white,
-                      ),
-                    ],
                   ),
                   const SizedBox(height: TSizes.spaceBtwSections),
                   const CustomSearchBar(),
@@ -88,7 +106,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar({
     super.key,
