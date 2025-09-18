@@ -5,6 +5,7 @@ import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/inner_vendor_store.dart';
+import 'package:shoe_app_assigment/views/screen/inner_screens/widget/vendro_card.dart';
 
 class StoreScreen extends StatelessWidget {
   const StoreScreen({super.key});
@@ -23,7 +24,6 @@ class StoreScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Only Vendors Section remains
               _buildVendorsSection(context, _vendorsStream, isDark),
             ],
           ),
@@ -32,7 +32,6 @@ class StoreScreen extends StatelessWidget {
     );
   }
 
-  // Vendors Section
   Widget _buildVendorsSection(BuildContext context, Stream<QuerySnapshot> vendorsStream, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +68,7 @@ class StoreScreen extends StatelessWidget {
         
         const SizedBox(height: TSizes.spaceBtwItems),
         
-        // Vendors List
+        // Vendors List using VendorCard
         StreamBuilder<QuerySnapshot>(
           stream: vendorsStream,
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -97,120 +96,25 @@ class StoreScreen extends StatelessWidget {
                 final vendor = snapshot.data!.docs[index];
                 final vendorData = vendor.data() as Map<String, dynamic>;
                 
-                return Container(
-                  margin: const EdgeInsets.only(bottom: TSizes.spaceBtwItems),
-                  decoration: BoxDecoration(
-                    color: isDark ? TColors.darkContainer : TColors.white,
-                    borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => InnerVendorStore(
-                            vendorId: vendorData['uid'] ?? '',
-                          ),
+                // Use the VendorCard widget
+                return VendorCard(
+                  fullName: vendorData['fullName'] ?? 'Unknown Vendor',
+                  email: vendorData['email'] ?? 'No email',
+                  storeImage: vendorData['storeImage'], // Can be null
+                  city: vendorData['city'], // Can be null
+                  locality: vendorData['locality'], // Can be null
+                  streetAddress: vendorData['streetAddress'], // Can be null
+                  isVerified: true, // You can add a verified field to your database or set logic here
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => InnerVendorStore(
+                          vendorId: vendorData['uid'] ?? '',
                         ),
-                      );
-                    },
-                    borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
-                    child: Padding(
-                      padding: const EdgeInsets.all(TSizes.md),
-                      child: Row(
-                        children: [
-                          // Vendor Avatar
-                          Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [TColors.newBlue, TColors.newBlue.withOpacity(0.7)],
-                              ),
-                              shape: BoxShape.circle,
-                            ),
-                            child: CircleAvatar(
-                              radius: 25,
-                              backgroundColor: isDark ? TColors.darkContainer : TColors.white,
-                              child: Text(
-                                (vendorData['fullName'] ?? 'V')[0].toUpperCase(),
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                  color: TColors.newBlue,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          
-                          const SizedBox(width: TSizes.md),
-                          
-                          // Vendor Info
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  vendorData['fullName'] ?? 'Unknown Vendor',
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Iconsax.verify5,
-                                      color: TColors.success,
-                                      size: 14,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      "Verified Seller",
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: TColors.success,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  vendorData['email'] ?? 'No email',
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: isDark ? TColors.textDarkSecondary : TColors.textSecondary,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                          
-                          // Arrow Icon
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: TColors.newBlue.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(TSizes.cardRadiusSm),
-                            ),
-                            child: Icon(
-                              Iconsax.arrow_right_3,
-                              color: TColors.newBlue,
-                              size: TSizes.iconSm,
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 );
               },
             );
@@ -225,7 +129,7 @@ class StoreScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(TSizes.defaultSpace),
       decoration: BoxDecoration(
-        color: isDark ? TColors.darkContainer : TColors.white,
+        color: isDark ? TColors.darkerGrey : TColors.white,
         borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
       ),
       child: Column(
@@ -254,10 +158,10 @@ class StoreScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(TSizes.defaultSpace),
       decoration: BoxDecoration(
-        color: isDark ? TColors.darkContainer : TColors.white,
+        color: isDark ? TColors.darkerGrey : TColors.white,
         borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
         border: Border.all(
-          color: isDark ? TColors.borderDark : TColors.borderLight,
+          color: isDark ? TColors.darkGrey : TColors.grey,
         ),
       ),
       child: Column(
