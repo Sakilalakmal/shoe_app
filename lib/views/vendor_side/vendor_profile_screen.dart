@@ -13,7 +13,7 @@ class VendorProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = HelperFunctions.isDarkMode(context);
-    
+
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder<DocumentSnapshot>(
@@ -28,16 +28,26 @@ class VendorProfileScreen extends StatelessWidget {
               );
             }
 
-            if (vendorSnapshot.hasError || !vendorSnapshot.hasData || !vendorSnapshot.data!.exists) {
-              return _buildErrorState(context, "Unable to load profile", isDark);
+            if (vendorSnapshot.hasError ||
+                !vendorSnapshot.hasData ||
+                !vendorSnapshot.data!.exists) {
+              return _buildErrorState(
+                context,
+                "Unable to load profile",
+                isDark,
+              );
             }
 
-            final vendorData = vendorSnapshot.data!.data() as Map<String, dynamic>;
+            final vendorData =
+                vendorSnapshot.data!.data() as Map<String, dynamic>;
 
             return StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('shoeOrders')
-                  .where('vendorId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                  .where(
+                    'vendorId',
+                    isEqualTo: FirebaseAuth.instance.currentUser!.uid,
+                  )
                   .snapshots(),
               builder: (context, ordersSnapshot) {
                 // Calculate order statistics
@@ -64,19 +74,25 @@ class VendorProfileScreen extends StatelessWidget {
                     children: [
                       // Profile Header Section
                       _buildProfileHeader(context, vendorData, isDark),
-                      
+
                       const SizedBox(height: TSizes.spaceBtwSections),
-                      
+
                       // Upload Section
                       _buildUploadSection(context, isDark),
-                      
+
                       const SizedBox(height: TSizes.spaceBtwSections),
-                      
+
                       // Overview Section
-                      _buildOverviewSection(context, totalOrders, pendingOrders, deliveredOrders, isDark),
-                      
+                      _buildOverviewSection(
+                        context,
+                        totalOrders,
+                        pendingOrders,
+                        deliveredOrders,
+                        isDark,
+                      ),
+
                       const SizedBox(height: TSizes.spaceBtwSections),
-                      
+
                       // Logout Button
                       _buildLogoutButton(context, isDark),
                     ],
@@ -90,18 +106,19 @@ class VendorProfileScreen extends StatelessWidget {
     );
   }
 
-  // Profile Header Widget
-  Widget _buildProfileHeader(BuildContext context, Map<String, dynamic> vendorData, bool isDark) {
+  // Profile Header Widget - Updated version
+  Widget _buildProfileHeader(
+    BuildContext context,
+    Map<String, dynamic> vendorData,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.all(TSizes.md),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            TColors.newBlue,
-            TColors.newBlue.withOpacity(0.8),
-          ],
+          colors: [TColors.newBlue, TColors.newBlue.withOpacity(0.8)],
         ),
         borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
         boxShadow: [
@@ -114,73 +131,85 @@ class VendorProfileScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Profile Picture
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: TColors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: CircleAvatar(
-              radius: 40,
-              backgroundColor: TColors.lightContainer,
-              child: Text(
-                (vendorData['fullName'] ?? 'V')[0].toUpperCase(),
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: TColors.newBlue,
-                  fontWeight: FontWeight.bold,
-                ),
+          // Profile Picture - Fixed to be circular and properly centered
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: TColors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: CircleAvatar(
+                radius: 40,
+                backgroundColor: TColors.lightContainer,
+                backgroundImage:
+                    (vendorData['storeImage'] != null &&
+                        vendorData['storeImage'].toString().isNotEmpty)
+                    ? NetworkImage(vendorData['storeImage'])
+                    : null,
+                child:
+                    (vendorData['storeImage'] == null ||
+                        vendorData['storeImage'].toString().isEmpty)
+                    ? Text(
+                        (vendorData['fullName'] ?? 'V')[0].toUpperCase(),
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(
+                              color: TColors.newBlue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      )
+                    : null,
               ),
             ),
           ),
-          
+
           const SizedBox(height: TSizes.spaceBtwItems),
-          
-          // Vendor Name
-          Text(
-            vendorData['fullName'] ?? 'Unknown Vendor',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: TColors.white,
-              fontWeight: FontWeight.bold,
+
+          // Vendor Name - Centered
+          Center(
+            child: Text(
+              vendorData['fullName'] ?? 'Unknown Vendor',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: TColors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: TSizes.spaceBtwItems / 2),
-          
-          // Vendor Email
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: TSizes.md,
-              vertical: TSizes.sm,
-            ),
-            decoration: BoxDecoration(
-              color: TColors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Iconsax.sms,
-                  color: TColors.white,
-                  size: 16,
-                ),
-                const SizedBox(width: TSizes.sm),
-                Text(
-                  vendorData['email'] ?? 'No email',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: TColors.white,
+
+          // Vendor Email - Centered
+          Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: TSizes.md,
+                vertical: TSizes.sm,
+              ),
+              decoration: BoxDecoration(
+                color: TColors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Iconsax.sms, color: TColors.white, size: 16),
+                  const SizedBox(width: TSizes.sm),
+                  Text(
+                    vendorData['email'] ?? 'No email',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: TColors.white),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -215,11 +244,7 @@ class VendorProfileScreen extends StatelessWidget {
                   color: TColors.newBlue.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(TSizes.cardRadiusSm),
                 ),
-                child: Icon(
-                  Iconsax.box_add,
-                  color: TColors.newBlue,
-                  size: 20,
-                ),
+                child: Icon(Iconsax.box_add, color: TColors.newBlue, size: 20),
               ),
               const SizedBox(width: TSizes.sm),
               Text(
@@ -231,9 +256,9 @@ class VendorProfileScreen extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: TSizes.spaceBtwItems),
-          
+
           // Description
           Text(
             "Upload your latest shoe collection and start selling to customers worldwide.",
@@ -241,22 +266,29 @@ class VendorProfileScreen extends StatelessWidget {
               color: isDark ? TColors.textDarkSecondary : TColors.textSecondary,
             ),
           ),
-          
+
           const SizedBox(height: TSizes.spaceBtwItems),
-          
+
           // Upload Button
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context){
-                  return UploadScreen();
-                }));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return UploadScreen();
+                    },
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: TColors.newBlue,
                 foregroundColor: TColors.white,
-                padding: const EdgeInsets.symmetric(vertical: TSizes.buttonHeight),
+                padding: const EdgeInsets.symmetric(
+                  vertical: TSizes.buttonHeight,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(TSizes.buttonRadius),
                 ),
@@ -284,18 +316,20 @@ class VendorProfileScreen extends StatelessWidget {
   }
 
   // Overview Section Widget
-  Widget _buildOverviewSection(BuildContext context, int totalOrders, int pendingOrders, int deliveredOrders, bool isDark) {
+  Widget _buildOverviewSection(
+    BuildContext context,
+    int totalOrders,
+    int pendingOrders,
+    int deliveredOrders,
+    bool isDark,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Section Title
         Row(
           children: [
-            Icon(
-              Iconsax.chart_1,
-              color: TColors.newBlue,
-              size: 20,
-            ),
+            Icon(Iconsax.chart_1, color: TColors.newBlue, size: 20),
             const SizedBox(width: TSizes.sm),
             Text(
               "Your Overview",
@@ -306,9 +340,9 @@ class VendorProfileScreen extends StatelessWidget {
             ),
           ],
         ),
-        
+
         const SizedBox(height: TSizes.spaceBtwItems),
-        
+
         // Stats Cards Row
         Row(
           children: [
@@ -324,7 +358,7 @@ class VendorProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: TSizes.spaceBtwItems),
-            
+
             // Pending Orders Card
             Expanded(
               child: _buildStatsCard(
@@ -337,7 +371,7 @@ class VendorProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: TSizes.spaceBtwItems),
-            
+
             // Delivered Orders Card
             Expanded(
               child: _buildStatsCard(
@@ -356,7 +390,14 @@ class VendorProfileScreen extends StatelessWidget {
   }
 
   // Stats Card Widget
-  Widget _buildStatsCard(BuildContext context, String title, String value, IconData icon, Color color, bool isDark) {
+  Widget _buildStatsCard(
+    BuildContext context,
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.all(TSizes.md),
       decoration: BoxDecoration(
@@ -380,15 +421,11 @@ class VendorProfileScreen extends StatelessWidget {
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(TSizes.cardRadiusSm),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 20,
-            ),
+            child: Icon(icon, color: color, size: 20),
           ),
-          
+
           const SizedBox(height: TSizes.spaceBtwItems),
-          
+
           // Value
           Text(
             value,
@@ -397,9 +434,9 @@ class VendorProfileScreen extends StatelessWidget {
               color: isDark ? TColors.white : TColors.textPrimary,
             ),
           ),
-          
+
           const SizedBox(height: 4),
-          
+
           // Title
           Text(
             title,
@@ -420,20 +457,14 @@ class VendorProfileScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? TColors.darkContainer : TColors.white,
         borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
-        border: Border.all(
-          color: TColors.red,
-        ),
+        border: Border.all(color: TColors.red),
       ),
       child: Column(
         children: [
-          Icon(
-            Iconsax.logout,
-            color: TColors.red,
-            size: 32,
-          ),
-          
+          Icon(Iconsax.logout, color: TColors.red, size: 32),
+
           const SizedBox(height: TSizes.spaceBtwItems),
-          
+
           Text(
             "Ready to Sign Out?",
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -441,9 +472,9 @@ class VendorProfileScreen extends StatelessWidget {
               color: isDark ? TColors.white : TColors.textPrimary,
             ),
           ),
-          
+
           const SizedBox(height: TSizes.spaceBtwItems / 2),
-          
+
           Text(
             "You can always sign back in anytime",
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -451,9 +482,9 @@ class VendorProfileScreen extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: TSizes.spaceBtwItems),
-          
+
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -463,7 +494,10 @@ class VendorProfileScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: TColors.red,
                 foregroundColor: TColors.white,
-                padding: const EdgeInsets.symmetric(vertical: TSizes.buttonHeight , horizontal: TSizes.defaultSpace),
+                padding: const EdgeInsets.symmetric(
+                  vertical: TSizes.buttonHeight,
+                  horizontal: TSizes.defaultSpace,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(TSizes.buttonRadius),
                 ),
@@ -500,9 +534,9 @@ class VendorProfileScreen extends StatelessWidget {
         ),
         title: Text(
           "Sign Out",
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         content: Text(
           "Are you sure you want to sign out?",
@@ -511,10 +545,7 @@ class VendorProfileScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
-              "Cancel",
-              style: TextStyle(color: TColors.darkGrey),
-            ),
+            child: Text("Cancel", style: TextStyle(color: TColors.darkGrey)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -544,17 +575,13 @@ class VendorProfileScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Iconsax.warning_2,
-            size: 60,
-            color: TColors.red,
-          ),
+          Icon(Iconsax.warning_2, size: 60, color: TColors.red),
           const SizedBox(height: TSizes.spaceBtwItems),
           Text(
             message,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: TColors.red,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: TColors.red),
             textAlign: TextAlign.center,
           ),
         ],
