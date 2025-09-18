@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
@@ -9,6 +10,7 @@ import 'package:shoe_app_assigment/views/screen/inner_screens/widget/order_histo
 
 class DeliveredOrdersScreen extends StatelessWidget {
   const DeliveredOrdersScreen({super.key});
+  
 
   @override
   Widget build(BuildContext context) {
@@ -18,27 +20,51 @@ class DeliveredOrdersScreen extends StatelessWidget {
     if (user == null) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Delivered Orders'),
+          title: Text(
+            'Delivered Orders',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: isDark ? TColors.white : TColors.dark,
+            ),
+          ),
         ),
         body: Center(
-          child: Text(
-            'Please log in to view your orders',
-            style: Theme.of(context).textTheme.bodyLarge,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Iconsax.warning_2,
+                size: 80,
+                color: TColors.error,
+              ),
+              const SizedBox(height: TSizes.spaceBtwItems),
+              Text(
+                'Please log in to view your orders',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: TColors.error,
+                ),
+              ),
+            ],
           ),
         ),
       );
     }
 
     return Scaffold(
+      backgroundColor: isDark ? TColors.dark : TColors.white,
       appBar: AppBar(
         title: Text(
           'Delivered Orders',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.bold,
+            color: isDark ? TColors.white : TColors.dark,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Iconsax.arrow_left),
+          icon: Icon(
+            Iconsax.arrow_left,
+            color: isDark ? TColors.white : TColors.dark,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         backgroundColor: isDark ? TColors.dark : TColors.white,
@@ -66,20 +92,32 @@ class DeliveredOrdersScreen extends StatelessWidget {
             ),
             const SizedBox(height: TSizes.spaceBtwSections),
 
-            // Orders List
+            // Orders List with Real-time Updates
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('shoeOrders')
                     .where('buyerId', isEqualTo: user.uid)
                     .where('delivered', isEqualTo: true)
-                    .orderBy('createdAt', descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
-                      child: CircularProgressIndicator(
-                        color: TColors.newBlue,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            color: TColors.newBlue,
+                            strokeWidth: 3,
+                          ),
+                          const SizedBox(height: TSizes.spaceBtwItems),
+                          Text(
+                            'Loading your orders...',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: isDark ? TColors.darkGrey : TColors.darkGrey,
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   }
@@ -94,24 +132,74 @@ class DeliveredOrdersScreen extends StatelessWidget {
 
                   final orders = snapshot.data!.docs;
 
-                  return ListView.builder(
-                    itemCount: orders.length,
-                    itemBuilder: (context, index) {
-                      final orderData = orders[index].data() as Map<String, dynamic>;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Orders Count Header
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: TSizes.md,
+                          vertical: TSizes.sm,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              TColors.success.withOpacity(0.1),
+                              TColors.success.withOpacity(0.05),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
+                          border: Border.all(
+                            color: TColors.success.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Iconsax.tick_circle,
+                              color: TColors.success,
+                              size: 20,
+                            ),
+                            const SizedBox(width: TSizes.sm),
+                            Text(
+                              '${orders.length} Delivered Order${orders.length == 1 ? '' : 's'}',
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: TColors.success,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       
-                      return OrderHistoryWidget(
-                        orderId: orderData['orderId'] ?? orders[index].id,
-                        status: 'delivered',
-                        totalPrice: (orderData['shoePrice'])*orderData['quantity'].toDouble(),
-                        itemCount: orderData.length ?? 1,
-                        orderDate: (orderData['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-                        items: orderData['items'],
-                        additionalData: orderData,
-                        onTap: () {
-                          _showOrderDetails(context, orderData, isDark);
-                        },
-                      );
-                    },
+                      const SizedBox(height: TSizes.spaceBtwSections),
+
+                      // Orders List
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: orders.length,
+                          itemBuilder: (context, index) {
+                            final orderData = orders[index].data() as Map<String, dynamic>;
+                            
+                            return OrderHistoryWidget(
+                              orderId: orderData['orderId'] ?? orders[index].id,
+                              shoeImage: orderData['shoeImage'] ?? '',
+                              shoeName: orderData['shoeName'] ?? 'Unknown Shoe',
+                              shoePrice: (orderData['shoePrice'] ?? 0.0).toDouble(),
+                              quantity: orderData['quantity'] ?? 1,
+                              shoeSizes: orderData['shoeSizes'] ?? 'N/A',
+                              createdAt: (orderData['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+                              delivered: true, // Always true for this screen
+                              processing: false, // Always false for delivered orders
+                              onTap: () {
+                                _showOrderDetails(context, orderData, isDark);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   );
                 },
               ),
@@ -124,83 +212,204 @@ class DeliveredOrdersScreen extends StatelessWidget {
 
   Widget _buildEmptyState(BuildContext context, bool isDark) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(TSizes.xl),
-            decoration: BoxDecoration(
-              color: TColors.success.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Iconsax.box_tick,
-              size: 80,
-              color: TColors.success,
-            ),
-          ),
-          const SizedBox(height: TSizes.spaceBtwSections),
-          Text(
-            'No Delivered Orders Yet',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDark ? TColors.white : TColors.dark,
-            ),
-          ),
-          const SizedBox(height: TSizes.spaceBtwItems),
-          Text(
-            'You don\'t have any delivered orders yet.\nStart shopping to see your orders here!',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: isDark ? TColors.darkGrey : TColors.darkGrey,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: TSizes.spaceBtwSections),
-          ElevatedButton.icon(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Iconsax.shop),
-            label: const Text('Start Shopping'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: TColors.newBlue,
-              foregroundColor: TColors.white,
-              padding: const EdgeInsets.symmetric(
-                horizontal: TSizes.xl,
-                vertical: TSizes.md,
+      child: Padding(
+        padding: const EdgeInsets.all(TSizes.defaultSpace),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(TSizes.xl),
+              decoration: BoxDecoration(
+                color: TColors.success.withOpacity(0.1),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: TColors.success.withOpacity(0.2),
+                  width: 2,
+                ),
+              ),
+              child: Icon(
+                Iconsax.box_tick,
+                size: 80,
+                color: TColors.success,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: TSizes.spaceBtwSections),
+            Text(
+              'No Delivered Orders Yet',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: isDark ? TColors.white : TColors.dark,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: TSizes.spaceBtwItems),
+            Container(
+              padding: const EdgeInsets.all(TSizes.md),
+              decoration: BoxDecoration(
+                color: isDark ? TColors.darkContainer : TColors.lightContainer,
+                borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
+                border: Border.all(
+                  color: isDark ? TColors.darkGrey : TColors.grey.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                'You don\'t have any delivered orders yet.\nStart shopping to see your completed orders here!',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: isDark ? TColors.darkGrey : TColors.darkGrey,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: TSizes.spaceBtwSections),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    TColors.newBlue,
+                    TColors.newBlue.withOpacity(0.8),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(TSizes.buttonRadius),
+                boxShadow: [
+                  BoxShadow(
+                    color: TColors.newBlue.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ElevatedButton.icon(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Iconsax.shop, color: TColors.white),
+                label: Text(
+                  'Start Shopping',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: TColors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: TSizes.xl,
+                    vertical: TSizes.md,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(TSizes.buttonRadius),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildErrorState(BuildContext context, bool isDark) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Iconsax.warning_2,
-            size: 80,
-            color: TColors.error,
-          ),
-          const SizedBox(height: TSizes.spaceBtwSections),
-          Text(
-            'Something went wrong',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: TColors.error,
+      child: Padding(
+        padding: const EdgeInsets.all(TSizes.defaultSpace),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(TSizes.xl),
+              decoration: BoxDecoration(
+                color: TColors.error.withOpacity(0.1),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: TColors.error.withOpacity(0.2),
+                  width: 2,
+                ),
+              ),
+              child: Icon(
+                Iconsax.warning_2,
+                size: 80,
+                color: TColors.error,
+              ),
             ),
-          ),
-          const SizedBox(height: TSizes.spaceBtwItems),
-          Text(
-            'Unable to load your delivered orders.\nPlease try again later.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: isDark ? TColors.darkGrey : TColors.darkGrey,
+            const SizedBox(height: TSizes.spaceBtwSections),
+            Text(
+              'Something went wrong',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: TColors.error,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+            const SizedBox(height: TSizes.spaceBtwItems),
+            Container(
+              padding: const EdgeInsets.all(TSizes.md),
+              decoration: BoxDecoration(
+                color: isDark ? TColors.darkContainer : TColors.lightContainer,
+                borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
+                border: Border.all(
+                  color: TColors.error.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                'Unable to load your delivered orders.\nPlease check your connection and try again.',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: isDark ? TColors.darkGrey : TColors.darkGrey,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: TSizes.spaceBtwSections),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    TColors.error,
+                    TColors.error.withOpacity(0.8),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(TSizes.buttonRadius),
+                boxShadow: [
+                  BoxShadow(
+                    color: TColors.error.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  // Refresh the page by rebuilding
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const DeliveredOrdersScreen()),
+                  );
+                },
+                icon: const Icon(Iconsax.refresh, color: TColors.white),
+                label: Text(
+                  'Try Again',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: TColors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: TSizes.xl,
+                    vertical: TSizes.md,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(TSizes.buttonRadius),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -211,13 +420,20 @@ class DeliveredOrdersScreen extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.7,
+        height: MediaQuery.of(context).size.height * 0.8,
         decoration: BoxDecoration(
           color: isDark ? TColors.dark : TColors.white,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(TSizes.cardRadiusLg),
             topRight: Radius.circular(TSizes.cardRadiusLg),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
         ),
         child: Padding(
           padding: const EdgeInsets.all(TSizes.defaultSpace),
@@ -237,14 +453,58 @@ class DeliveredOrdersScreen extends StatelessWidget {
               ),
               const SizedBox(height: TSizes.spaceBtwItems),
               
-              // Order Details Header
-              Text(
-                'Order Details',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? TColors.white : TColors.dark,
-                ),
+              // Header with Status Badge
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Order Details',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? TColors.white : TColors.dark,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: TSizes.sm,
+                      vertical: TSizes.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          TColors.success.withOpacity(0.15),
+                          TColors.success.withOpacity(0.1),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(TSizes.cardRadiusSm),
+                      border: Border.all(
+                        color: TColors.success.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Iconsax.tick_circle,
+                          color: TColors.success,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Delivered',
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: TColors.success,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
+              
               const SizedBox(height: TSizes.spaceBtwSections),
               
               // Order Information
@@ -252,13 +512,39 @@ class DeliveredOrdersScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      _buildDetailRow('Order ID', '#${(orderData['orderId'] ?? 'N/A').toString().substring(0, 8).toUpperCase()}', isDark),
+                      _buildDetailRow('Order ID', '#${(orderData['orderId'] ?? 'N/A').toString().toUpperCase()}', isDark),
+                      _buildDetailRow('Shoe Name', orderData['shoeName'] ?? 'N/A', isDark),
+                      _buildDetailRow('Price', '\$${(orderData['shoePrice'] ?? 0.0).toStringAsFixed(2)}', isDark),
+                      _buildDetailRow('Quantity', '${orderData['quantity'] ?? 1} items', isDark),
+                      _buildDetailRow('Size', orderData['shoeSizes'] ?? 'N/A', isDark),
+                      _buildDetailRow('Total Amount', '\$${((orderData['shoePrice'] ?? 0.0) * (orderData['quantity'] ?? 1)).toStringAsFixed(2)}', isDark),
+                      _buildDetailRow('Order Date', (orderData['createdAt'] as Timestamp?)?.toDate().toString().split(' ')[0] ?? 'N/A', isDark),
                       _buildDetailRow('Status', 'Delivered ✅', isDark),
-                      _buildDetailRow('Total Price', '\$${(orderData['totalPrice'] ?? 0.0).toStringAsFixed(2)}', isDark),
-                      _buildDetailRow('Items Count', '${(orderData['items'] as List?)?.length ?? 1} products', isDark),
-                      _buildDetailRow('Order Date', (orderData['orderDate'] as Timestamp?)?.toDate().toString().split(' ')[0] ?? 'N/A', isDark),
-                      // Add more details as needed
                     ],
+                  ),
+                ),
+              ),
+              
+              // Close Button
+              const SizedBox(height: TSizes.spaceBtwItems),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TColors.newBlue,
+                    foregroundColor: TColors.white,
+                    padding: const EdgeInsets.symmetric(vertical: TSizes.md),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(TSizes.buttonRadius),
+                    ),
+                  ),
+                  child: Text(
+                    'Close',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: TColors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -270,23 +556,39 @@ class DeliveredOrdersScreen extends StatelessWidget {
   }
 
   Widget _buildDetailRow(String label, String value, bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: TSizes.sm),
+    return Container(
+      margin: const EdgeInsets.only(bottom: TSizes.sm),
+      padding: const EdgeInsets.all(TSizes.md),
+      decoration: BoxDecoration(
+        color: isDark ? TColors.darkContainer : TColors.lightContainer,
+        borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
+        border: Border.all(
+          color: isDark ? TColors.darkGrey.withOpacity(0.2) : TColors.grey.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: isDark ? TColors.darkGrey : TColors.darkGrey,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+        
             ),
           ),
-          Text(
-            value,
-            style: TextStyle(
+          Flexible(
+            child: Text(
+              value,
+              style: GoogleFonts.poppins(
+              fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: isDark ? TColors.white : TColors.dark,
+        
+            ),
+              textAlign: TextAlign.end,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

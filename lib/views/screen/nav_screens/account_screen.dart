@@ -6,13 +6,19 @@ import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/delivered_orders_screen.dart';
+import 'package:shoe_app_assigment/views/screen/inner_screens/order_history_screen.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/show_orders_screen.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/widget/profile_picture_widget.dart';
 import 'package:shoe_app_assigment/views/screen/nav_screens/favorite_screen.dart';
 
-class AccountScreen extends StatelessWidget {
+class AccountScreen extends StatefulWidget {
   const AccountScreen({Key? key}) : super(key: key);
 
+  @override
+  State<AccountScreen> createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     final dark = HelperFunctions.isDarkMode(context);
@@ -415,7 +421,7 @@ class _QuickActionsSection extends StatelessWidget {
                 () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ShowOrdersScreen()),
+                    MaterialPageRoute(builder: (context) => const OrderHistoryScreen()),
                   );
                 },
               ),
