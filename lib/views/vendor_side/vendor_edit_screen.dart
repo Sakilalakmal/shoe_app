@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
+import 'package:shoe_app_assigment/views/components/notify_message/motion_toast.dart';
 
 class EditVendorProfileScreen extends StatefulWidget {
   const EditVendorProfileScreen({super.key});
@@ -169,10 +170,8 @@ class _EditVendorProfileScreenState extends State<EditVendorProfileScreen> {
         'zipCode': _zipCodeController.text.trim(),
       });
 
-      _showSnackBar('Profile updated successfully');
-      if (mounted) {
-        Navigator.pop(context);
-      }
+      AppToast.success(context, 'Profile updated successfully');
+     
     } catch (e) {
       _showSnackBar('Error updating profile', isError: true);
     } finally {
