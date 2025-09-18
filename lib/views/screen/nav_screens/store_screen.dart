@@ -23,16 +23,18 @@ class StoreScreen extends StatelessWidget {
           padding: const EdgeInsets.all(TSizes.defaultSpace),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildVendorsSection(context, _vendorsStream, isDark),
-            ],
+            children: [_buildVendorsSection(context, _vendorsStream, isDark)],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildVendorsSection(BuildContext context, Stream<QuerySnapshot> vendorsStream, bool isDark) {
+  Widget _buildVendorsSection(
+    BuildContext context,
+    Stream<QuerySnapshot> vendorsStream,
+    bool isDark,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -53,72 +55,81 @@ class StoreScreen extends StatelessWidget {
                 Text(
                   "Discover trusted sellers",
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: isDark ? TColors.textDarkSecondary : TColors.textSecondary,
+                    color: isDark
+                        ? TColors.textDarkSecondary
+                        : TColors.textSecondary,
                   ),
                 ),
               ],
             ),
-            Icon(
-              Iconsax.shop,
-              color: TColors.newBlue,
-              size: TSizes.iconMd,
-            ),
+            Icon(Iconsax.shop, color: TColors.newBlue, size: TSizes.iconMd),
           ],
         ),
-        
+
         const SizedBox(height: TSizes.spaceBtwItems),
-        
+
         // Vendors List using VendorCard
         StreamBuilder<QuerySnapshot>(
           stream: vendorsStream,
-          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) {
-              return _buildErrorState(context, "Something went wrong", isDark);
-            }
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return _buildErrorState(
+                    context,
+                    "Something went wrong",
+                    isDark,
+                  );
+                }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(
-                  color: TColors.newBlue,
-                ),
-              );
-            }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(color: TColors.newBlue),
+                  );
+                }
 
-            if (snapshot.data!.docs.isEmpty) {
-              return _buildEmptyState(context, "No vendors available", isDark);
-            }
+                if (snapshot.data!.docs.isEmpty) {
+                  return _buildEmptyState(
+                    context,
+                    "No vendors available",
+                    isDark,
+                  );
+                }
 
-            return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                final vendor = snapshot.data!.docs[index];
-                final vendorData = vendor.data() as Map<String, dynamic>;
-                
-                // Use the VendorCard widget
-                return VendorCard(
-                  fullName: vendorData['fullName'] ?? 'Unknown Vendor',
-                  email: vendorData['email'] ?? 'No email',
-                  storeImage: vendorData['storeImage'], // Can be null
-                  city: vendorData['city'], // Can be null
-                  locality: vendorData['locality'], // Can be null
-                  streetAddress: vendorData['streetAddress'], // Can be null
-                  isVerified: true, // You can add a verified field to your database or set logic here
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => InnerVendorStore(
-                          vendorId: vendorData['uid'] ?? '',
-                        ),
-                      ),
-                    );
-                  },
+                return SizedBox(
+                  height: TSizes.vendorCardHeight,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: snapshot.data!.docs.length,
+                    shrinkWrap: true,
+                    physics: ScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final vendor = snapshot.data!.docs[index];
+                      final vendorData = vendor.data() as Map<String, dynamic>;
+
+                      // Use the VendorCard widget
+                      return VendorCard(
+                        fullName: vendorData['fullName'] ?? 'Unknown Vendor',
+                        email: vendorData['email'] ?? 'No email',
+                        storeImage: vendorData['storeImage'],
+                        city: vendorData['city'],
+                        locality: vendorData['locality'],
+                        streetAddress: vendorData['streetAddress'],
+                        isVerified: true,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => InnerVendorStore(
+                                vendorId: vendorData['uid'] ?? '',
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 );
               },
-            );
-          },
         ),
       ],
     );
@@ -135,17 +146,13 @@ class StoreScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Iconsax.warning_2,
-            size: 48,
-            color: TColors.error,
-          ),
+          Icon(Iconsax.warning_2, size: 48, color: TColors.error),
           const SizedBox(height: TSizes.spaceBtwItems),
           Text(
             message,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: TColors.error,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: TColors.error),
             textAlign: TextAlign.center,
           ),
         ],
@@ -160,9 +167,7 @@ class StoreScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? TColors.darkerGrey : TColors.white,
         borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
-        border: Border.all(
-          color: isDark ? TColors.darkGrey : TColors.grey,
-        ),
+        border: Border.all(color: isDark ? TColors.darkGrey : TColors.grey),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -175,9 +180,9 @@ class StoreScreen extends StatelessWidget {
           const SizedBox(height: TSizes.spaceBtwItems),
           Text(
             message,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: TColors.darkGrey,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: TColors.darkGrey),
             textAlign: TextAlign.center,
           ),
         ],

@@ -74,13 +74,12 @@ class TSizes {
   static const bannerShadow = 170.0;
   static const indicatorWidth = 8.0;
 
-  //category 
+  //category
   static const double categoryHeight = 56.0;
 
   static const productCardHeight = 300.0;
 
- 
+  //vendor card sizes in
+  static const double vendorCardWidth = 280.0;
+  static const double vendorCardHeight = 250.0;
 }
-
-
-
