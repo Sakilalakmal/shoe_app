@@ -421,14 +421,14 @@ class VendorProfileScreen extends StatelessWidget {
         color: isDark ? TColors.darkContainer : TColors.white,
         borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
         border: Border.all(
-          color: TColors.error.withOpacity(0.3),
+          color: TColors.red,
         ),
       ),
       child: Column(
         children: [
           Icon(
             Iconsax.logout,
-            color: TColors.error,
+            color: TColors.red,
             size: 32,
           ),
           
@@ -461,9 +461,9 @@ class VendorProfileScreen extends StatelessWidget {
                 _showLogoutDialog(context);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: TColors.error,
+                backgroundColor: TColors.red,
                 foregroundColor: TColors.white,
-                padding: const EdgeInsets.symmetric(vertical: TSizes.buttonHeight),
+                padding: const EdgeInsets.symmetric(vertical: TSizes.buttonHeight , horizontal: TSizes.defaultSpace),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(TSizes.buttonRadius),
                 ),
@@ -528,7 +528,7 @@ class VendorProfileScreen extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: TColors.error,
+              backgroundColor: TColors.red,
               foregroundColor: TColors.white,
             ),
             child: Text("Sign Out"),
@@ -547,13 +547,13 @@ class VendorProfileScreen extends StatelessWidget {
           Icon(
             Iconsax.warning_2,
             size: 60,
-            color: TColors.error,
+            color: TColors.red,
           ),
           const SizedBox(height: TSizes.spaceBtwItems),
           Text(
             message,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: TColors.error,
+              color: TColors.red,
             ),
             textAlign: TextAlign.center,
           ),
