@@ -85,6 +85,7 @@ flutter:
      - assets/images/
      - assets/animations/
      - .env
+     - assets/data/
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1",
+    "name": "Air Jordan 12 Retro French Blue",
+    "brandName": "Nike",
+    "price": 205,
+    "discount": 78,
+    "category": "Sneakers",
+    "stock": 30,
+    "sizes": ["M 7 / W 8.5", "M 7.5 / W 9", "1M 12 / W 13.5", "M 8 / W 9.5"],
+    "description": "No need to call for a ride—MJ's game-winning look from '96 will get you where you need to go. This AJ12 is the return of Tinker Hatfield's celebrated design, the first to bring Air Zoom cushioning to Jordan's signature line. Premium materials give it a seasonal refresh, while the sunrise-inspired stitch lines on the upper hook back to the original. This is buzzer-beater style, perfected",
+    "images": ["assets/images/adidas_1.png","assets/images/adidas_2.png","assets/images/adidas_3.png"]
+  }
+]
