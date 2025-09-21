@@ -52,16 +52,19 @@ class _AccountScreenState extends State<AccountScreen> {
 
               // Account Stats Section
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: TSizes.defaultSpace),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: TSizes.defaultSpace,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "Account Overview",
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: dark ? TColors.white : TColors.dark,
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: dark ? TColors.white : TColors.dark,
+                          ),
                     ),
                     const SizedBox(height: TSizes.spaceBtwItems),
 
@@ -73,10 +76,11 @@ class _AccountScreenState extends State<AccountScreen> {
                     // Quick Actions Section
                     Text(
                       "Quick Actions",
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: dark ? TColors.white : TColors.dark,
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: dark ? TColors.white : TColors.dark,
+                          ),
                     ),
                     const SizedBox(height: TSizes.spaceBtwItems),
 
@@ -156,10 +160,11 @@ class _ProfileHeaderSection extends StatelessWidget {
                   children: [
                     Text(
                       userData['fullName'] ?? 'User Name',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: TColors.white,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: TColors.white,
+                          ),
                     ),
                     const SizedBox(height: TSizes.spaceBtwItems / 2),
                     Text(
@@ -252,11 +257,23 @@ class _WishlistStatsCard extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return _buildLoadingCard(context, "Wishlist", Iconsax.heart, TColors.error, dark);
+            return _buildLoadingCard(
+              context,
+              "Wishlist",
+              Iconsax.heart,
+              TColors.error,
+              dark,
+            );
           }
 
           if (snapshot.hasError) {
-            return _buildErrorCard(context, "Wishlist", Iconsax.heart, TColors.error, dark);
+            return _buildErrorCard(
+              context,
+              "Wishlist",
+              Iconsax.heart,
+              TColors.error,
+              dark,
+            );
           }
 
           int wishlistCount = 0;
@@ -270,7 +287,9 @@ class _WishlistStatsCard extends StatelessWidget {
             TColors.error,
             "Wishlist",
             wishlistCount.toString(),
-            wishlistCount == 0 ? "No items saved yet" : "$wishlistCount item${wishlistCount == 1 ? '' : 's'}",
+            wishlistCount == 0
+                ? "No items saved yet"
+                : "$wishlistCount item${wishlistCount == 1 ? '' : 's'}",
             dark,
           );
         },
@@ -297,17 +316,29 @@ class _ProcessingOrdersCard extends StatelessWidget {
       },
       child: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('shoeOrders') // CHANGED FROM 'orders' TO 'shoeOrders'
+            .collection('shoeOrders')
             .where('buyerId', isEqualTo: userId)
             .where('processing', isEqualTo: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return _buildLoadingCard(context, "Processing", Iconsax.refresh, TColors.warning, dark);
+            return _buildLoadingCard(
+              context,
+              "Pending Review",
+              Iconsax.refresh,
+              TColors.warning,
+              dark,
+            );
           }
 
           if (snapshot.hasError) {
-            return _buildErrorCard(context, "Processing", Iconsax.refresh, TColors.warning, dark);
+            return _buildErrorCard(
+              context,
+              "Pending Review",
+              Iconsax.refresh,
+              TColors.warning,
+              dark,
+            );
           }
 
           int processingCount = 0;
@@ -319,9 +350,11 @@ class _ProcessingOrdersCard extends StatelessWidget {
             context,
             Iconsax.refresh,
             TColors.warning,
-            "Processing",
+            "reviews",
             processingCount.toString(),
-            processingCount == 0 ? "No orders processing" : "$processingCount order${processingCount == 1 ? '' : 's'}",
+            processingCount == 0
+                ? "No orders processing"
+                : " delivered ! give reviews",
             dark,
           );
         },
@@ -343,7 +376,9 @@ class _DeliveredOrdersCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const DeliveredOrdersScreen()),
+          MaterialPageRoute(
+            builder: (context) => const DeliveredOrdersScreen(),
+          ),
         );
       },
       child: StreamBuilder<QuerySnapshot>(
@@ -354,11 +389,23 @@ class _DeliveredOrdersCard extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return _buildLoadingCard(context, "Delivered", Iconsax.tick_circle, TColors.success, dark);
+            return _buildLoadingCard(
+              context,
+              "Delivered",
+              Iconsax.tick_circle,
+              TColors.success,
+              dark,
+            );
           }
 
           if (snapshot.hasError) {
-            return _buildErrorCard(context, "Delivered", Iconsax.tick_circle, TColors.success, dark);
+            return _buildErrorCard(
+              context,
+              "Delivered",
+              Iconsax.tick_circle,
+              TColors.success,
+              dark,
+            );
           }
 
           int deliveredCount = 0;
@@ -372,7 +419,9 @@ class _DeliveredOrdersCard extends StatelessWidget {
             TColors.success,
             "Delivered",
             deliveredCount.toString(),
-            deliveredCount == 0 ? "No delivered orders yet" : "$deliveredCount order${deliveredCount == 1 ? '' : 's'}",
+            deliveredCount == 0
+                ? "No delivered orders yet"
+                : "order at Your doorstep",
             dark,
           );
         },
@@ -404,7 +453,9 @@ class _QuickActionsSection extends StatelessWidget {
                 () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const FavoriteScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const FavoriteScreen(),
+                    ),
                   );
                 },
               ),
@@ -421,7 +472,9 @@ class _QuickActionsSection extends StatelessWidget {
                 () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const OrderHistoryScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const OrderHistoryScreen(),
+                    ),
                   );
                 },
               ),
@@ -543,7 +596,10 @@ class _ProfileActionsSection extends StatelessWidget {
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context, false),
-                      child: Text('Cancel', style: TextStyle(color: TColors.darkGrey)),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: TColors.darkGrey),
+                      ),
                     ),
                     ElevatedButton(
                       onPressed: () => Navigator.pop(context, true),
@@ -584,10 +640,7 @@ class _ProfileActionsSection extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(TSizes.buttonRadius),
               ),
-              side: BorderSide(
-                color: TColors.error,
-                width: 1.5,
-              ),
+              side: BorderSide(color: TColors.error, width: 1.5),
             ),
           ),
         ),
@@ -714,10 +767,7 @@ Widget _buildLoadingCard(
         SizedBox(
           width: 20,
           height: 20,
-          child: CircularProgressIndicator(
-            color: iconColor,
-            strokeWidth: 2,
-          ),
+          child: CircularProgressIndicator(color: iconColor, strokeWidth: 2),
         ),
         const SizedBox(height: TSizes.spaceBtwItems / 2),
         Text(
@@ -754,10 +804,7 @@ Widget _buildErrorCard(
           offset: const Offset(0, 4),
         ),
       ],
-      border: Border.all(
-        color: TColors.error.withOpacity(0.3),
-        width: 1,
-      ),
+      border: Border.all(color: TColors.error.withOpacity(0.3), width: 1),
     ),
     child: Column(
       children: [
@@ -767,7 +814,11 @@ Widget _buildErrorCard(
             color: TColors.error.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(Iconsax.warning_2, color: TColors.error, size: TSizes.iconMd),
+          child: Icon(
+            Iconsax.warning_2,
+            color: TColors.error,
+            size: TSizes.iconMd,
+          ),
         ),
         const SizedBox(height: TSizes.spaceBtwItems / 2),
         Text(
