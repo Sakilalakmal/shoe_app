@@ -3,7 +3,7 @@ class Shoe {
   final String name;
   final String brandName;
   final double price;
-  final double discount;
+  final int discount;
   final String category;
   final int stock;
   final List<String> sizes;  // List of available sizes
@@ -27,16 +27,16 @@ class Shoe {
   // From JSON (deserialization)
   factory Shoe.fromJson(Map<String, dynamic> json) {
     return Shoe(
-      id: json['id'],
-      name: json['name'],
-      brandName: json['brandName'],
-      price: json['price'],
-      discount: json['discount'],
-      category: json['category'],
-      stock: json['stock'],
-      sizes: List<String>.from(json['sizes']),
-      description: json['description'],
-      images: List<String>.from(json['images']),
+      id: json['id'] ?? '',  // Provide a default value if 'id' is missing
+      name: json['name'] ?? '',
+      brandName: json['brandName'] ?? '',
+      price: json['price'] ?? 0.0,
+      discount: json['discount'] ?? 0.0,
+      category: json['category'] ?? '',
+      stock: json['stock'] ?? 0,
+      sizes: List<String>.from(json['sizes'] ?? []),
+      description: json['description'] ?? '',
+      images: List<String>.from(json['images'] ?? []),
     );
   }
 
