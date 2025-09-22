@@ -8,7 +8,6 @@ import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/authentication/user_login/widgets/login_form.dart';
 import 'package:shoe_app_assigment/views/authentication/user_login/widgets/login_header.dart';
 import 'package:shoe_app_assigment/views/authentication/vendor_login/vendor_login.dart';
-import 'package:shoe_app_assigment/views/screen/inner_screens/widget/about_us_wrapper.dart';
 
 
 
@@ -71,11 +70,13 @@ class LoginScreen extends StatelessWidget {
                     Navigator.push(context,MaterialPageRoute(builder: (context){
                        return VendorLoginScreen();
                     }));
-                  }, child: Text(Texts.signIn),)
+                  }, child: Text(Texts.signIn),),
+
+                   
                 ],
               ),
 
-              AboutUsWrapper(),
+             
             ],
           ),
         ),
