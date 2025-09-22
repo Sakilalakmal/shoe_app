@@ -1,58 +1,38 @@
-class Shoe {
-  final String id;
-  final String name;
-  final String brandName;
-  final int price;
-  final int discount;
-  final String category;
-  final int stock;
-  final List<String> sizes;  // List of available sizes
-  final String description;
-  final List<String> images; // List of image URLs
+class AboutUs {
+  final String appLogoUrl; // URL for the app logo
+  final String appName; // App name
+  final String aboutUsDescription; // The description of the app
+  final String missionStatement; // App's mission statement
+  final List<String> socialMediaLinks; // Social media links (e.g., Facebook, Instagram, etc.)
 
   // Constructor
-  Shoe({
-    required this.id,
-    required this.name,
-    required this.brandName,
-    required this.price,
-    required this.discount,
-    required this.category,
-    required this.stock,
-    required this.sizes,
-    required this.description,
-    required this.images,
+  AboutUs({
+    required this.appLogoUrl,
+    required this.appName,
+    required this.aboutUsDescription,
+    required this.missionStatement,
+    required this.socialMediaLinks,
   });
 
   // From JSON (deserialization)
-  factory Shoe.fromJson(Map<String, dynamic> json) {
-    return Shoe(
-      id: json['id'] ?? '',  // Provide a default value if 'id' is missing
-      name: json['name'] ?? '',
-      brandName: json['brandName'] ?? '',
-      price: json['price'] ?? 0.0,
-      discount: json['discount'] ?? 0.0,
-      category: json['category'] ?? '',
-      stock: json['stock'] ?? 0,
-      sizes: List<String>.from(json['sizes'] ?? []),
-      description: json['description'] ?? '',
-      images: List<String>.from(json['images'] ?? []),
+  factory AboutUs.fromJson(Map<String, dynamic> json) {
+    return AboutUs(
+      appLogoUrl: json['appLogoUrl'] ?? '', // App logo URL
+      appName: json['appName'] ?? '', // App name
+      aboutUsDescription: json['aboutUsDescription'] ?? '', // About Us description
+      missionStatement: json['missionStatement'] ?? '', // Mission statement
+      socialMediaLinks: List<String>.from(json['socialMediaLinks'] ?? []), // List of social media links
     );
   }
 
   // To JSON (serialization)
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'name': name,
-      'brandName': brandName,
-      'price': price,
-      'discount': discount,
-      'category': category,
-      'stock': stock,
-      'sizes': sizes,
-      'description': description,
-      'images': images,
+      'appLogoUrl': appLogoUrl,
+      'appName': appName,
+      'aboutUsDescription': aboutUsDescription,
+      'missionStatement': missionStatement,
+      'socialMediaLinks': socialMediaLinks,
     };
   }
 }

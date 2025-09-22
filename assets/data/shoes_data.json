@@ -1,14 +1,10 @@
-[
-  {
-    "id": "1",
-    "name": "Air Jordan 12 Retro French Blue",
-    "brandName": "Nike",
-    "price": 205,
-    "discount": 78,
-    "category": "Sneakers",
-    "stock": 30,
-    "sizes": ["M 7 / W 8.5", "M 7.5 / W 9", "1M 12 / W 13.5", "M 8 / W 9.5"],
-    "description": "No need to call for a ride—MJ's game-winning look from '96 will get you where you need to go. This AJ12 is the return of Tinker Hatfield's celebrated design, the first to bring Air Zoom cushioning to Jordan's signature line. Premium materials give it a seasonal refresh, while the sunrise-inspired stitch lines on the upper hook back to the original. This is buzzer-beater style, perfected",
-    "images": ["assets/images/adidas_1.png","assets/images/adidas_2.png","assets/images/adidas_3.png"]
-  }
-]
+{
+  "appLogoUrl": "assets/images/logo.png",
+  "appName": "SneakersX",
+  "aboutUsDescription": "SneakerX is a dynamic platform that brings together sneaker buyers and vendors in one seamless marketplace. Whether you're a passionate sneakerhead or a vendor looking to reach a larger audience, SneakerX offers an innovative and user-friendly experience. Buyers can browse a wide selection of the latest sneakers, enjoy personalized recommendations, and access exclusive deals, while vendors have the opportunity to showcase their products and earn money with their own dedicated space in the app. With real-time stock updates, SneakerX is designed to meet the needs of sneaker enthusiasts and sellers alike, all while promoting sustainability and a customer-first approach",
+  "missionStatement": "Our mission at SneakerX is to revolutionize the sneaker market by connecting buyers and vendors in a way that prioritizes innovation, exclusivity, and customer satisfaction. We’re committed to offering a platform that empowers both customers and vendors through personalized experiences, real-time updates, and a community-driven marketplace. By embracing sustainability and ensuring fairness, we aim to be the go-to destination for all things sneakers—providing top-tier products, exceptional service, and the opportunity for vendors to grow their businesses.",
+  "socialMediaLinks": [
+    "https://www.instagram.com/sneakerx",
+    "https://www.facebook.com/sneakerx"
+  ]
+}

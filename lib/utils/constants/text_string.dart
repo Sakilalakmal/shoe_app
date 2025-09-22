@@ -89,4 +89,6 @@ class Texts {
 
   static const String myOrders = 'My shoe orders';
   static const String orderDetails = 'Check on Your Orders';
+
+  static const String popularProductsSection = "Popular Products";
 }

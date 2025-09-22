@@ -182,7 +182,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsetsGeometry.all(TSizes.defaultSpace),
+        padding: EdgeInsets.all(TSizes.defaultSpace),
         child: ElevatedButton(
           onPressed: selectedSize == null || selectedSize!.isEmpty ? null : () {
             _cartProvider.addShoesToCart(
@@ -199,7 +199,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               shoeDescription: widget.productData['shoeDescription'],
               vendorId: widget.productData['vendorId'],
             );
-
+      
             AppToast.success(
               context,
               "${widget.productData['shoeName']} added to the box",

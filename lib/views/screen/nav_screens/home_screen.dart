@@ -13,7 +13,6 @@ import 'package:shoe_app_assigment/views/components/categories/category_item.dar
 import 'package:shoe_app_assigment/views/components/circular_widget/primary_header_container.dart';
 import 'package:shoe_app_assigment/views/components/recommended_products/recommended_products_widget.dart';
 import 'package:shoe_app_assigment/views/components/reusable_text/reusable_text.dart';
-import 'package:shoe_app_assigment/views/screen/inner_screens/widget/PopularProductsWidget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -115,7 +114,6 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: TSizes.spaceBtwItems),
             RecommendedProductsWidget(),
             const SizedBox(height: TSizes.spaceBtwItems),
-            PopularProductsWidget(),
           ],
         ),
       ),
