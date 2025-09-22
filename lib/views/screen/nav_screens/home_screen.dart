@@ -13,6 +13,7 @@ import 'package:shoe_app_assigment/views/components/categories/category_item.dar
 import 'package:shoe_app_assigment/views/components/circular_widget/primary_header_container.dart';
 import 'package:shoe_app_assigment/views/components/recommended_products/recommended_products_widget.dart';
 import 'package:shoe_app_assigment/views/components/reusable_text/reusable_text.dart';
+import 'package:shoe_app_assigment/views/screen/inner_screens/widget/PopularProductsWidget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,10 +23,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   Future<Map<String, dynamic>?> getCurrentBuyerProfile() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
-    final doc = await FirebaseFirestore.instance.collection('buyers').doc(uid).get();
+    final doc = await FirebaseFirestore.instance
+        .collection('buyers')
+        .doc(uid)
+        .get();
     return doc.data();
   }
 
@@ -54,16 +57,24 @@ class _HomeScreenState extends State<HomeScreen> {
                             CircleAvatar(
                               radius: 22,
                               backgroundColor: Colors.white,
-                              backgroundImage: (img.isNotEmpty) ? NetworkImage(img) : null,
+                              backgroundImage: (img.isNotEmpty)
+                                  ? NetworkImage(img)
+                                  : null,
                               child: (img.isEmpty)
-                                  ? Icon(Icons.person, size: 28, color: Colors.grey.shade400)
+                                  ? Icon(
+                                      Icons.person,
+                                      size: 28,
+                                      color: Colors.grey.shade400,
+                                    )
                                   : null,
                             ),
-                           const SizedBox(width: TSizes.defaultSpace,),
+                            const SizedBox(width: TSizes.defaultSpace),
                             Flexible(
                               child: Text(
                                 'Good day for shopping,\n $name',
-                                style: Theme.of(context).textTheme.headlineMedium,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineMedium,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -97,15 +108,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
             BannerWidget(),
 
-            ReusableText(title: Texts.recommendedForYou, subTitle: Texts.viewAll),
-            const SizedBox(height: TSizes.spaceBtwItems,),
+            ReusableText(
+              title: Texts.recommendedForYou,
+              subTitle: Texts.viewAll,
+            ),
+            const SizedBox(height: TSizes.spaceBtwItems),
             RecommendedProductsWidget(),
+            const SizedBox(height: TSizes.spaceBtwItems),
+            PopularProductsWidget(),
           ],
         ),
       ),
     );
   }
 }
+
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar({
     super.key,

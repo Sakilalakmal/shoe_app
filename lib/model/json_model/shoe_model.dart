@@ -2,7 +2,7 @@ class Shoe {
   final String id;
   final String name;
   final String brandName;
-  final double price;
+  final int price;
   final int discount;
   final String category;
   final int stock;
