@@ -7,6 +7,8 @@ import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/inner_vendor_store.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/widget/vendro_card.dart';
 
+// ...existing imports...
+
 class StoreScreen extends StatelessWidget {
   const StoreScreen({super.key});
 
@@ -96,7 +98,7 @@ class StoreScreen extends StatelessWidget {
                 }
 
                 return SizedBox(
-                  height: TSizes.vendorCardHeight,
+                  height: TSizes.vendorCardHeight + 40, // UPDATED: Added height for new buttons
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: snapshot.data!.docs.length,
@@ -106,7 +108,7 @@ class StoreScreen extends StatelessWidget {
                       final vendor = snapshot.data!.docs[index];
                       final vendorData = vendor.data() as Map<String, dynamic>;
 
-                      // Use the VendorCard widget
+                      // ENHANCED: Use the VendorCard with new parameters
                       return VendorCard(
                         fullName: vendorData['fullName'] ?? 'Unknown Vendor',
                         email: vendorData['email'] ?? 'No email',
@@ -114,6 +116,9 @@ class StoreScreen extends StatelessWidget {
                         city: vendorData['city'],
                         locality: vendorData['locality'],
                         streetAddress: vendorData['streetAddress'],
+                        contact: vendorData['contact'], // ADDED: Phone number
+                        latitude: vendorData['latitude']?.toDouble(), // ADDED: Latitude
+                        longitude: vendorData['longitude']?.toDouble(), // ADDED: Longitude
                         isVerified: true,
                         onTap: () {
                           Navigator.push(
@@ -135,7 +140,7 @@ class StoreScreen extends StatelessWidget {
     );
   }
 
-  // Error State Widget
+  // ...existing error and empty state methods remain the same...
   Widget _buildErrorState(BuildContext context, String message, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(TSizes.defaultSpace),
@@ -160,7 +165,6 @@ class StoreScreen extends StatelessWidget {
     );
   }
 
-  // Empty State Widget
   Widget _buildEmptyState(BuildContext context, String message, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(TSizes.defaultSpace),

@@ -3,8 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:geolocator/geolocator.dart'; // Add this dependency
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
@@ -27,10 +29,15 @@ class _EditVendorProfileScreenState extends State<EditVendorProfileScreen> {
   final _localityController = TextEditingController();
   final _streetAddressController = TextEditingController();
   final _zipCodeController = TextEditingController();
+  
+  // ADDED: Location controllers
+  final _latitudeController = TextEditingController();
+  final _longitudeController = TextEditingController();
 
   bool _isLoading = true;
   bool _isSaving = false;
   bool _isUploadingImage = false;
+  bool _isGettingLocation = false; // ADDED: Location loading state
   String? _currentImageUrl;
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
@@ -51,6 +58,8 @@ class _EditVendorProfileScreenState extends State<EditVendorProfileScreen> {
     _localityController.dispose();
     _streetAddressController.dispose();
     _zipCodeController.dispose();
+    _latitudeController.dispose(); // ADDED
+    _longitudeController.dispose(); // ADDED
     super.dispose();
   }
 
@@ -75,12 +84,71 @@ class _EditVendorProfileScreenState extends State<EditVendorProfileScreen> {
         _streetAddressController.text = data['streetAddress'] ?? '';
         _zipCodeController.text = data['zipCode'] ?? '';
         _currentImageUrl = data['storeImage'];
+        
+        // ADDED: Load location data
+        _latitudeController.text = data['latitude']?.toString() ?? '';
+        _longitudeController.text = data['longitude']?.toString() ?? '';
       }
     } catch (e) {
       _showSnackBar('Error loading profile data', isError: true);
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  // ADDED: Location permission and fetching functionality
+  Future<void> _getCurrentLocation() async {
+    setState(() => _isGettingLocation = true);
+
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        _showSnackBar('Location services are disabled. Please enable them in settings.', isError: true);
+        return;
+      }
+
+      // Check location permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          _showSnackBar('Location permissions are denied', isError: true);
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        _showSnackBar('Location permissions are permanently denied. Please enable them in settings.', isError: true);
+        return;
+      }
+
+      // Get current location
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
+      );
+
+      // Update the text fields
+      setState(() {
+        _latitudeController.text = position.latitude.toStringAsFixed(6);
+        _longitudeController.text = position.longitude.toStringAsFixed(6);
+      });
+
+      _showSnackBar('Location updated successfully!');
+    } catch (e) {
+      String errorMessage = 'Error getting location';
+      if (e.toString().contains('timeout')) {
+        errorMessage = 'Location request timed out. Please try again.';
+      } else if (e.toString().contains('denied')) {
+        errorMessage = 'Location access denied';
+      }
+      _showSnackBar(errorMessage, isError: true);
+    } finally {
+      if (mounted) {
+        setState(() => _isGettingLocation = false);
       }
     }
   }
@@ -148,6 +216,8 @@ class _EditVendorProfileScreenState extends State<EditVendorProfileScreen> {
     }
   }
 
+// ...existing code...
+
   Future<void> _saveProfile() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -157,10 +227,8 @@ class _EditVendorProfileScreenState extends State<EditVendorProfileScreen> {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId == null) return;
 
-      await FirebaseFirestore.instance
-          .collection('vendors')
-          .doc(userId)
-          .update({
+      // ENHANCED: Better type safety and error handling
+      final updateData = <String, dynamic>{
         'fullName': _fullNameController.text.trim(),
         'contact': _contactController.text.trim(),
         'State': _stateController.text.trim(),
@@ -168,12 +236,45 @@ class _EditVendorProfileScreenState extends State<EditVendorProfileScreen> {
         'locality': _localityController.text.trim(),
         'streetAddress': _streetAddressController.text.trim(),
         'zipCode': _zipCodeController.text.trim(),
-      });
+      };
+
+      // Add location data with validation and error handling
+      try {
+        if (_latitudeController.text.trim().isNotEmpty) {
+          final latitude = double.parse(_latitudeController.text.trim());
+          if (latitude >= -90 && latitude <= 90) {
+            updateData['latitude'] = latitude;
+          } else {
+            throw FormatException('Invalid latitude range');
+          }
+        }
+        
+        if (_longitudeController.text.trim().isNotEmpty) {
+          final longitude = double.parse(_longitudeController.text.trim());
+          if (longitude >= -180 && longitude <= 180) {
+            updateData['longitude'] = longitude;
+          } else {
+            throw FormatException('Invalid longitude range');
+          }
+        }
+      } catch (e) {
+        _showSnackBar('Invalid location coordinates. Please check your input.', isError: true);
+        return;
+      }
+
+      await FirebaseFirestore.instance
+          .collection('vendors')
+          .doc(userId)
+          .update(updateData);
 
       AppToast.success(context, 'Profile updated successfully');
      
     } catch (e) {
-      _showSnackBar('Error updating profile', isError: true);
+      String errorMessage = 'Error updating profile';
+      if (e.toString().contains('latitude') || e.toString().contains('longitude')) {
+        errorMessage = 'Invalid location data. Please check coordinates.';
+      }
+      _showSnackBar(errorMessage, isError: true);
     } finally {
       if (mounted) {
         setState(() => _isSaving = false);
@@ -181,6 +282,7 @@ class _EditVendorProfileScreenState extends State<EditVendorProfileScreen> {
     }
   }
 
+// ...existing code...
   void _showSnackBar(String message, {bool isError = false}) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -206,6 +308,41 @@ class _EditVendorProfileScreenState extends State<EditVendorProfileScreen> {
     if (cityEmpty && streetEmpty) {
       return 'Either city or street address is required';
     }
+    return null;
+  }
+
+  // ADDED: Location validation functions
+  String? _validateLatitude(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return null; // Optional field
+    }
+    
+    final double? lat = double.tryParse(value.trim());
+    if (lat == null) {
+      return 'Please enter a valid number';
+    }
+    
+    if (lat < -90 || lat > 90) {
+      return 'Latitude must be between -90 and 90';
+    }
+    
+    return null;
+  }
+
+  String? _validateLongitude(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return null; // Optional field
+    }
+    
+    final double? lng = double.tryParse(value.trim());
+    if (lng == null) {
+      return 'Please enter a valid number';
+    }
+    
+    if (lng < -180 || lng > 180) {
+      return 'Longitude must be between -180 and 180';
+    }
+    
     return null;
   }
 
@@ -239,10 +376,145 @@ class _EditVendorProfileScreenState extends State<EditVendorProfileScreen> {
               const SizedBox(height: TSizes.spaceBtwSections),
               _buildAddressSection(context, isDark),
               const SizedBox(height: TSizes.spaceBtwSections),
+              _buildLocationSection(context, isDark), // ADDED: New location section
+              const SizedBox(height: TSizes.spaceBtwSections),
               _buildActionButtons(context, isDark),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // ADDED: Location section with latitude and longitude fields
+  Widget _buildLocationSection(BuildContext context, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(TSizes.md),
+      decoration: BoxDecoration(
+        color: isDark ? TColors.darkerGrey : TColors.white,
+        borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Iconsax.location_add, color: TColors.newBlue, size: 20),
+              const SizedBox(width: TSizes.sm),
+              Text(
+                'Store Location',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? TColors.white : TColors.black,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: TSizes.spaceBtwItems / 2),
+          Text(
+            'Add precise location coordinates for better customer experience',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: isDark ? TColors.darkGrey : TColors.darkGrey,
+            ),
+          ),
+          const SizedBox(height: TSizes.spaceBtwItems),
+          
+          // Auto-location button
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: TSizes.spaceBtwInputFields),
+            child: OutlinedButton.icon(
+              onPressed: _isGettingLocation ? null : _getCurrentLocation,
+              icon: _isGettingLocation
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        color: TColors.newBlue,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Icon(Iconsax.gps, size: 18),
+              label: Text(_isGettingLocation ? 'Getting Location...' : 'Use Current Location'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: TColors.newBlue,
+                side: BorderSide(color: TColors.newBlue.withOpacity(0.5)),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(TSizes.inputFieldRadius),
+                ),
+              ),
+            ),
+          ),
+          
+          // Latitude and Longitude fields
+          Row(
+            children: [
+              Expanded(
+                child: _buildTextField(
+                  controller: _latitudeController,
+                  label: 'Latitude',
+                  hint: 'e.g., 37.4219983',
+                  prefixIcon: Iconsax.location,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  validator: _validateLatitude,
+                  isDark: isDark,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*')),
+                  ],
+                ),
+              ),
+              const SizedBox(width: TSizes.spaceBtwInputFields),
+              Expanded(
+                child: _buildTextField(
+                  controller: _longitudeController,
+                  label: 'Longitude',
+                  hint: 'e.g., -122.084',
+                  prefixIcon: Iconsax.location,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  validator: _validateLongitude,
+                  isDark: isDark,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*')),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          
+          // Helper text
+          const SizedBox(height: TSizes.spaceBtwItems / 2),
+          Container(
+            padding: const EdgeInsets.all(TSizes.sm),
+            decoration: BoxDecoration(
+              color: TColors.newBlue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(TSizes.cardRadiusSm),
+              border: Border.all(color: TColors.newBlue.withOpacity(0.3)),
+            ),
+            child: Row(
+              children: [
+                Icon(Iconsax.info_circle, color: TColors.newBlue, size: 16),
+                const SizedBox(width: TSizes.xs),
+                Expanded(
+                  child: Text(
+                    'Latitude: -90 to 90 • Longitude: -180 to 180',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: TColors.newBlue,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -581,12 +853,14 @@ class _EditVendorProfileScreenState extends State<EditVendorProfileScreen> {
     String? Function(String?)? validator,
     TextInputType keyboardType = TextInputType.text,
     bool enabled = true,
+    List<TextInputFormatter>? inputFormatters, // ADDED: Support for input formatters
   }) {
     return TextFormField(
       controller: controller,
       validator: validator,
       keyboardType: keyboardType,
       enabled: enabled,
+      inputFormatters: inputFormatters, // ADDED
       style: Theme.of(context).textTheme.bodyMedium,
       decoration: InputDecoration(
         labelText: label,
@@ -604,6 +878,14 @@ class _EditVendorProfileScreenState extends State<EditVendorProfileScreen> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TSizes.inputFieldRadius),
           borderSide: BorderSide(color: TColors.newBlue, width: 1.5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(TSizes.inputFieldRadius),
+          borderSide: BorderSide(color: TColors.error, width: 1.5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(TSizes.inputFieldRadius),
+          borderSide: BorderSide(color: TColors.error, width: 1.5),
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TSizes.inputFieldRadius),
