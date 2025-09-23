@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shoe_app_assigment/model/categoryModel/category_models.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/components/product_card_widget/product_card_widget.dart';
+import 'package:shoe_app_assigment/views/screen/inner_screens/product_details_screen.dart';
 
 class CategoryProductScreen extends StatelessWidget {
   final CategoryModels categoryModels;
@@ -54,6 +55,9 @@ class CategoryProductScreen extends StatelessWidget {
                   discount: shoeCategoryData['discount'],
                   onTap: () {
                     // Navigate to product details
+                    Navigator.push(context, MaterialPageRoute(builder: (context){
+                      return ProductDetailsScreen(productData: shoeCategoryData);
+                    }));
                   },
                 );
               },
