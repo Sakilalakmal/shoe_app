@@ -1,4 +1,3 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,7 +11,6 @@ import 'package:shoe_app_assigment/utils/theme/widget_themes/device_utility.dart
 import 'package:shoe_app_assigment/views/components/carousel_slider/banner_widget.dart';
 import 'package:shoe_app_assigment/views/components/carousel_slider/home_carousel_slider.dart';
 import 'package:shoe_app_assigment/views/components/categories/category_item.dart';
-import 'package:shoe_app_assigment/views/components/circular_widget/circular_container.dart';
 import 'package:shoe_app_assigment/views/components/circular_widget/primary_header_container.dart';
 import 'package:shoe_app_assigment/views/components/recommended_products/recommended_products_widget.dart';
 import 'package:shoe_app_assigment/views/components/reusable_text/reusable_text.dart';
