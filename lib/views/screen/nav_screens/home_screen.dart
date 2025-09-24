@@ -125,8 +125,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-
-
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar({
     super.key,
