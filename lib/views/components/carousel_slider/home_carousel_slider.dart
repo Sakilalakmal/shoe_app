@@ -10,6 +10,9 @@ class carousel_slider_sales extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    
+
     return Padding(
       padding: const EdgeInsets.all(TSizes.defaultSpace),
       child: Column(
