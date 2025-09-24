@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +11,7 @@ import 'package:shoe_app_assigment/utils/theme/widget_themes/appbar.dart';
 import 'package:shoe_app_assigment/utils/theme/widget_themes/device_utility.dart';
 import 'package:shoe_app_assigment/views/components/carousel_slider/banner_widget.dart';
 import 'package:shoe_app_assigment/views/components/categories/category_item.dart';
+import 'package:shoe_app_assigment/views/components/circular_widget/circular_container.dart';
 import 'package:shoe_app_assigment/views/components/circular_widget/primary_header_container.dart';
 import 'package:shoe_app_assigment/views/components/recommended_products/recommended_products_widget.dart';
 import 'package:shoe_app_assigment/views/components/reusable_text/reusable_text.dart';
@@ -114,6 +116,76 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: TSizes.spaceBtwItems),
             RecommendedProductsWidget(),
             const SizedBox(height: TSizes.spaceBtwItems),
+
+            //second carousel slider
+            Padding(
+              padding: const EdgeInsets.all(TSizes.defaultSpace),
+              child: Column(
+                children: [
+                  CarouselSlider(
+                    items: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(TSizes.md),
+                        ),
+
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(TSizes.md),
+                          child: Image(
+                            image: AssetImage('assets/images/c1.webp'),
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(TSizes.md),
+                        ),
+
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(TSizes.md),
+                          child: Image(
+                            image: AssetImage('assets/images/c2.webp'),
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(TSizes.md),
+                        ),
+
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(TSizes.md),
+                          child: Image(
+                            image: AssetImage('assets/images/c3.webp'),
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                    ],
+                    options: CarouselOptions(viewportFraction: 1),
+                  ),
+                  const SizedBox(height: TSizes.spaceBtwItems),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for(int i = 0; i < 3; i++)
+                      Container(
+                        height: 4,
+                        width: 20,
+                        margin: EdgeInsets.only(right: 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: TColors.newBlue,
+                        ),
+                        )
+                     
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
