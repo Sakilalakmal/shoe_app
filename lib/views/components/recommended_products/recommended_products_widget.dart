@@ -54,6 +54,7 @@ class RecommendedProductsWidget extends StatelessWidget {
                   child: Container(
                     width: 180,
                     padding: const EdgeInsets.all(1),
+                    margin: EdgeInsets.symmetric(horizontal: TSizes.spaceBtwItems / 2),
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
