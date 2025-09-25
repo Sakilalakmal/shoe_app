@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shoe_app_assigment/model/quote_model/Quote_Model.dart';
 
 class ApiService {
-  static const String _baseUrl = 'https://api.quotable.io';
+  static const String _baseUrl = 'https://zenquotes.io/api';
   static const String _randomQuoteEndpoint = '/random';
 
   // Get random inspirational quote
