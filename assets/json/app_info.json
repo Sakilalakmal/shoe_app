@@ -3,169 +3,123 @@
     "appName": "ShoeHub",
     "version": "1.0.0",
     "tagline": "Your Ultimate Shoe Shopping Destination",
-    "description": "Experience the future of shoe shopping with our innovative mobile app designed for both customers and vendors."
+    "description": "ShoeHub is a modern e-commerce platform that connects shoe enthusiasts with premium footwear from trusted vendors worldwide."
   },
   "vision": {
     "title": "Our Vision",
-    "description": "To revolutionize the shoe shopping experience by connecting customers with premium footwear through innovative technology, exceptional service, and a seamless digital platform that brings together shoe enthusiasts and trusted vendors worldwide."
+    "description": "To revolutionize the shoe shopping experience by connecting customers with premium footwear through innovative technology and exceptional service.",
+    "mission": "Providing seamless shopping experiences with real-time inventory, secure payments, and exceptional customer service."
   },
-  "features": {
-    "userFeatures": {
-      "title": "Customer Features",
-      "items": [
-        {
-          "icon": "search",
-          "title": "Smart Browse",
-          "description": "Explore premium shoe collections with advanced filtering"
-        },
-        {
-          "icon": "heart",
-          "title": "Persistent Favorites",
-          "description": "Save your favorite shoes with automatic cloud sync"
-        },
-        {
-          "icon": "shopping_cart",
-          "title": "Smart Cart",
-          "description": "Shopping cart with local storage and size management"
-        },
-        {
-          "icon": "location",
-          "title": "Real-time Tracking",
-          "description": "Track your orders with live GPS integration"
-        },
-        {
-          "icon": "security",
-          "title": "Secure Auth",
-          "description": "Firebase-powered authentication with biometric support"
-        },
-        {
-          "icon": "palette",
-          "title": "Theme Support",
-          "description": "Beautiful dark and light themes with custom colors"
-        },
-        {
-          "icon": "quote",
-          "title": "Daily Inspiration",
-          "description": "Motivational quotes powered by real-time API"
-        }
-      ]
+  "userFeatures": [
+    {
+      "title": "Browse Premium Collections",
+      "description": "Discover thousands of shoes from top brands",
+      "icon": "shopping_bag"
     },
-    "vendorFeatures": {
-      "title": "Vendor Dashboard",
-      "items": [
-        {
-          "icon": "dashboard",
-          "title": "Product Management",
-          "description": "Comprehensive dashboard for inventory management"
-        },
-        {
-          "icon": "trending_up",
-          "title": "Real-time Analytics",
-          "description": "Live sales tracking and performance metrics"
-        },
-        {
-          "icon": "receipt",
-          "title": "Order Management",
-          "description": "Streamlined order processing and fulfillment"
-        },
-        {
-          "icon": "inventory",
-          "title": "Inventory Control",
-          "description": "Smart stock management with low inventory alerts"
-        },
-        {
-          "icon": "message",
-          "title": "Customer Communication",
-          "description": "Direct messaging and customer support tools"
-        }
-      ]
+    {
+      "title": "Smart Favorites System",
+      "description": "Save your favorite shoes with persistent storage",
+      "icon": "favorite"
+    },
+    {
+      "title": "Intelligent Shopping Cart",
+      "description": "Cart persists across app sessions with local storage",
+      "icon": "shopping_cart"
+    },
+    {
+      "title": "Real-time Order Tracking",
+      "description": "Track your orders with live updates",
+      "icon": "location_on"
+    },
+    {
+      "title": "Secure Authentication",
+      "description": "Firebase-powered secure login system",
+      "icon": "security"
+    },
+    {
+      "title": "Theme Customization",
+      "description": "Beautiful dark and light mode support",
+      "icon": "palette"
     }
-  },
+  ],
+  "vendorFeatures": [
+    {
+      "title": "Product Management Dashboard",
+      "description": "Easy-to-use interface for managing inventory",
+      "icon": "dashboard"
+    },
+    {
+      "title": "Real-time Inventory Tracking",
+      "description": "Live stock updates and low inventory alerts",
+      "icon": "inventory"
+    },
+    {
+      "title": "Order Management System",
+      "description": "Comprehensive order processing and fulfillment",
+      "icon": "receipt_long"
+    },
+    {
+      "title": "Analytics & Reporting",
+      "description": "Detailed sales analytics and performance metrics",
+      "icon": "analytics"
+    },
+    {
+      "title": "Customer Communication",
+      "description": "Direct messaging and notification systems",
+      "icon": "chat"
+    }
+  ],
   "technologies": {
     "title": "Built With Modern Technology",
-    "subtitle": "Cutting-edge tech stack for optimal performance",
+    "description": "Leveraging cutting-edge technologies for optimal performance",
     "stack": [
       {
         "name": "Flutter",
-        "description": "Cross-platform mobile development framework",
-        "category": "Frontend"
+        "description": "Cross-platform mobile development",
+        "version": "3.16+"
       },
       {
         "name": "Firebase",
-        "description": "Real-time database and cloud services",
-        "category": "Backend"
+        "description": "Real-time database and authentication",
+        "version": "Latest"
       },
       {
         "name": "Riverpod",
         "description": "Advanced state management solution",
-        "category": "State"
+        "version": "2.4+"
       },
       {
         "name": "SharedPreferences",
-        "description": "Local data persistence and caching",
-        "category": "Storage"
+        "description": "Local data persistence",
+        "version": "2.2+"
       },
       {
-        "name": "RESTful APIs",
-        "description": "External data integration and services",
-        "category": "Integration"
-      },
-      {
-        "name": "Cloud Firestore",
-        "description": "NoSQL cloud database for scalability",
-        "category": "Database"
-      }
-    ]
-  },
-  "achievements": {
-    "title": "App Highlights",
-    "items": [
-      {
-        "icon": "star",
-        "title": "Premium Quality",
-        "value": "100%",
-        "description": "Curated shoe collections"
-      },
-      {
-        "icon": "speed",
-        "title": "Performance",
-        "value": "99.9%",
-        "description": "App uptime reliability"
-      },
-      {
-        "icon": "security",
-        "title": "Secure",
-        "value": "256-bit",
-        "description": "SSL encryption"
-      },
-      {
-        "icon": "support",
-        "title": "Support",
-        "value": "24/7",
-        "description": "Customer service"
+        "name": "REST APIs",
+        "description": "External data integration",
+        "version": "HTTP/1.1"
       }
     ]
   },
   "company": {
     "name": "Zaki Company",
     "tagline": "Innovation in Every Step",
-    "description": "We are a technology company dedicated to creating innovative solutions that transform digital experiences. Our mission is to build products that connect people and businesses through cutting-edge mobile applications.",
+    "description": "Zaki Company is a technology-driven organization focused on creating innovative solutions that transform digital experiences.",
+    "founded": "2024",
     "copyright": "© 2024 Zaki Company. All rights reserved.",
     "contact": {
       "email": "support@zakicompany.com",
       "website": "www.zakicompany.com",
-      "phone": "+1 (555) 123-4567",
-      "address": "123 Innovation Street, Tech Valley, CA 94000"
+      "phone": "+1 (555) 123-4567"
     },
     "socialMedia": {
-      "twitter": "@zakicompany",
-      "linkedin": "zakicompany",
-      "github": "zakicompany"
+      "twitter": "@ZakiCompany",
+      "linkedin": "zaki-company",
+      "github": "zaki-company"
     }
   },
   "legal": {
-    "privacyPolicy": "We prioritize your privacy and data security with industry-standard encryption and compliance.",
-    "termsOfService": "Our terms ensure fair usage while protecting both users and vendors on our platform.",
-    "openSource": "Built with open-source technologies and community-driven development."
+    "privacyPolicy": "We respect your privacy and protect your personal information with industry-standard security measures.",
+    "termsOfService": "By using ShoeHub, you agree to our terms of service and community guidelines.",
+    "disclaimer": "ShoeHub connects buyers and sellers. We are not responsible for individual transactions between users."
   }
 }
