@@ -5,6 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
+import 'package:shoe_app_assigment/views/screen/inner_screens/about_app_screen.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/delivered_orders_screen.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/order_history_screen.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/show_orders_screen.dart';
@@ -86,6 +87,108 @@ class _AccountScreenState extends State<AccountScreen> {
 
                     // Action Cards
                     _QuickActionsSection(dark: dark),
+
+                    const SizedBox(height: TSizes.spaceBtwSections),
+
+                    // Alternative compact version
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: TSizes.defaultSpace,
+                      ),
+                      decoration: BoxDecoration(
+                        color: dark ? TColors.darkContainer : TColors.white,
+                        borderRadius: BorderRadius.circular(
+                          TSizes.cardRadiusLg,
+                        ),
+                        border: Border.all(
+                          color: dark
+                              ? TColors.borderDark.withOpacity(0.1)
+                              : TColors.borderLight.withOpacity(0.3),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: dark
+                                ? TColors.black.withOpacity(0.2)
+                                : TColors.darkGrey.withOpacity(0.08),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AboutAppScreen(),
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(
+                            TSizes.cardRadiusLg,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: TSizes.lg,
+                              vertical: TSizes.md,
+                            ),
+                            child: Row(
+                              children: [
+                                // Icon
+                                Container(
+                                  padding: const EdgeInsets.all(TSizes.sm),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        TColors.info.withOpacity(0.15),
+                                        TColors.info.withOpacity(0.05),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                      TSizes.cardRadiusMd,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Iconsax.info_circle,
+                                    color: TColors.info,
+                                    size: TSizes.iconMd,
+                                  ),
+                                ),
+
+                                const SizedBox(width: TSizes.md),
+
+                                // Text
+                                Expanded(
+                                  child: Text(
+                                    'About App',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: dark
+                                              ? TColors.textDarkPrimary
+                                              : TColors.textPrimary,
+                                        ),
+                                  ),
+                                ),
+
+                                // Arrow
+                                Icon(
+                                  Iconsax.arrow_right_3,
+                                  color: TColors.textSecondary,
+                                  size: TSizes.iconSm,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
 
                     const SizedBox(height: TSizes.spaceBtwSections),
 
