@@ -9,6 +9,7 @@ import 'package:shoe_app_assigment/views/screen/inner_screens/about_app_screen.d
 import 'package:shoe_app_assigment/views/screen/inner_screens/delivered_orders_screen.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/order_history_screen.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/show_orders_screen.dart';
+import 'package:shoe_app_assigment/views/screen/inner_screens/userEditScreen.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/widget/profile_picture_widget.dart';
 import 'package:shoe_app_assigment/views/screen/nav_screens/favorite_screen.dart';
 
@@ -648,11 +649,12 @@ class _ProfileActionsSection extends StatelessWidget {
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Edit profile coming soon'),
-                  backgroundColor: TColors.newBlue,
-                  behavior: SnackBarBehavior.floating,
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return UserEditScreen();
+                  },
                 ),
               );
             },
