@@ -4,6 +4,8 @@ import 'package:iconsax/iconsax.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
+import 'package:shoe_app_assigment/views/components/categories/category_item.dart';
+import 'package:shoe_app_assigment/views/components/recommended_products/recommended_products_widget.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/inner_vendor_store.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/widget/vendro_card.dart';
 
@@ -25,7 +27,37 @@ class StoreScreen extends StatelessWidget {
           padding: const EdgeInsets.all(TSizes.defaultSpace),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [_buildVendorsSection(context, _vendorsStream, isDark)],
+            children: [
+              _buildVendorsSection(context, _vendorsStream, isDark),
+              const SizedBox(height: TSizes.defaultSpace),
+
+              Text(
+                "Categories In SneakersX",
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+
+              const SizedBox(height: TSizes.defaultSpace),
+              //categories
+              Container(
+                height: TSizes.appBarHeight + 50,
+                width: HelperFunctions.screenWidth(),
+                child: Column(
+                  children: [
+                    const SizedBox(height: TSizes.defaultSpace - 5),
+                    CategoryItem(),
+                  ],
+                ),
+                decoration: BoxDecoration(color: Colors.blueAccent),
+              ),
+
+              //popular product sections
+              //for now i set recommended product for here
+              const SizedBox(height: TSizes.defaultSpace),
+              Text(
+                "Popular Shoes",
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            ],
           ),
         ),
       ),
@@ -98,7 +130,9 @@ class StoreScreen extends StatelessWidget {
                 }
 
                 return SizedBox(
-                  height: TSizes.vendorCardHeight + 40, // UPDATED: Added height for new buttons
+                  height:
+                      TSizes.vendorCardHeight +
+                      40, // UPDATED: Added height for new buttons
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: snapshot.data!.docs.length,
@@ -117,8 +151,10 @@ class StoreScreen extends StatelessWidget {
                         locality: vendorData['locality'],
                         streetAddress: vendorData['streetAddress'],
                         contact: vendorData['contact'], // ADDED: Phone number
-                        latitude: vendorData['latitude']?.toDouble(), // ADDED: Latitude
-                        longitude: vendorData['longitude']?.toDouble(), // ADDED: Longitude
+                        latitude: vendorData['latitude']
+                            ?.toDouble(), // ADDED: Latitude
+                        longitude: vendorData['longitude']
+                            ?.toDouble(), // ADDED: Longitude
                         isVerified: true,
                         onTap: () {
                           Navigator.push(
