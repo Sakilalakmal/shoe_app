@@ -103,7 +103,7 @@ class _AboutAppScreenState extends ConsumerState<AboutAppScreen>
                 gradient: LinearGradient(
                   colors: [
                     TColors.newBlue.withOpacity(0.15),
-                    TColors.primary.withOpacity(0.1),
+                    TColors.accent.withOpacity(0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
@@ -164,7 +164,7 @@ class _AboutAppScreenState extends ConsumerState<AboutAppScreen>
                   end: Alignment.bottomRight,
                   colors: [
                     TColors.newBlue.withOpacity(0.15),
-                    TColors.primary.withOpacity(0.1),
+                    TColors.accent.withOpacity(0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(50),
@@ -359,7 +359,7 @@ class _AboutAppScreenState extends ConsumerState<AboutAppScreen>
           end: Alignment.bottomRight,
           colors: [
             TColors.newBlue.withOpacity(0.1),
-            TColors.primary.withOpacity(0.05),
+            TColors.accent.withOpacity(0.05),
             Colors.transparent,
           ],
         ),
@@ -391,7 +391,7 @@ class _AboutAppScreenState extends ConsumerState<AboutAppScreen>
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [TColors.newBlue, TColors.primary],
+                  colors: [TColors.newBlue, TColors.accent],
                 ),
                 borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
                 boxShadow: [
@@ -941,19 +941,19 @@ class _AboutAppScreenState extends ConsumerState<AboutAppScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            TColors.primary.withOpacity(0.1),
+            TColors.accent.withOpacity(0.1),
             TColors.newBlue.withOpacity(0.05),
             Colors.transparent,
           ],
         ),
         borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
         border: Border.all(
-          color: TColors.primary.withOpacity(0.2),
+          color: TColors.accent.withOpacity(0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: TColors.primary.withOpacity(0.1),
+            color: TColors.accent.withOpacity(0.1),
             blurRadius: 24,
             offset: const Offset(0, 10),
           ),
@@ -970,12 +970,12 @@ class _AboutAppScreenState extends ConsumerState<AboutAppScreen>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [TColors.primary, TColors.newBlue],
+                colors: [TColors.accent, TColors.newBlue],
               ),
               borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
               boxShadow: [
                 BoxShadow(
-                  color: TColors.primary.withOpacity(0.3),
+                  color: TColors.accent.withOpacity(0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -1003,7 +1003,7 @@ class _AboutAppScreenState extends ConsumerState<AboutAppScreen>
             company.name,
             style: Theme.of(context).textTheme.displaySmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: TColors.primary,
+              color: TColors.accent,
             ),
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
@@ -1046,7 +1046,7 @@ class _AboutAppScreenState extends ConsumerState<AboutAppScreen>
                   : TColors.white.withOpacity(0.8),
               borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
               border: Border.all(
-                color: TColors.primary.withOpacity(0.1),
+                color: TColors.accent.withOpacity(0.1),
                 width: 1,
               ),
             ),
@@ -1093,17 +1093,17 @@ class _AboutAppScreenState extends ConsumerState<AboutAppScreen>
               vertical: TSizes.md,
             ),
             decoration: BoxDecoration(
-              color: TColors.primary.withOpacity(0.1),
+              color: TColors.accent.withOpacity(0.1),
               borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
               border: Border.all(
-                color: TColors.primary.withOpacity(0.2),
+                color: TColors.accent.withOpacity(0.2),
                 width: 1,
               ),
             ),
             child: Text(
               company.copyright,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: TColors.primary,
+                color: TColors.accent,
                 fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.center,
@@ -1124,7 +1124,7 @@ class _AboutAppScreenState extends ConsumerState<AboutAppScreen>
         vertical: TSizes.sm,
       ),
       decoration: BoxDecoration(
-        color: TColors.primary.withOpacity(0.05),
+        color: TColors.accent.withOpacity(0.05),
         borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
       ),
       child: Row(
@@ -1132,12 +1132,12 @@ class _AboutAppScreenState extends ConsumerState<AboutAppScreen>
           Container(
             padding: const EdgeInsets.all(TSizes.xs),
             decoration: BoxDecoration(
-              color: TColors.primary.withOpacity(0.1),
+              color: TColors.accent.withOpacity(0.1),
               borderRadius: BorderRadius.circular(TSizes.cardRadiusXs),
             ),
             child: Icon(
               icon,
-              color: TColors.primary,
+              color: TColors.accent,
               size: TSizes.iconSm,
             ),
           ),
