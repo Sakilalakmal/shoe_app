@@ -7,6 +7,7 @@ import 'package:shoe_app_assigment/controllers/connectivity_controller/connectiv
 import 'package:shoe_app_assigment/core/firebase/firebase_initializer.dart';
 import 'package:shoe_app_assigment/utils/theme/theme.dart';
 import 'package:shoe_app_assigment/views/authentication/user_login/login.dart';
+import 'package:shoe_app_assigment/views/screen/onBoarding/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
       darkTheme: TAppTheme.darkTheme,
       themeMode: ThemeMode.system,
 
-      home: LoginScreen(),
+      home:SplashScreen(),
       initialBinding: BindingsBuilder(() {
         Get.put<CategoryController>(CategoryController());
         Get.put<ConnectivityController>(ConnectivityController());
