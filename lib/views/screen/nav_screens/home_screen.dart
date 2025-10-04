@@ -12,6 +12,7 @@ import 'package:shoe_app_assigment/views/components/carousel_slider/banner_widge
 import 'package:shoe_app_assigment/views/components/carousel_slider/home_carousel_slider.dart';
 import 'package:shoe_app_assigment/views/components/categories/category_item.dart';
 import 'package:shoe_app_assigment/views/components/circular_widget/primary_header_container.dart';
+import 'package:shoe_app_assigment/views/components/featured_products/featured_products_widget.dart';
 import 'package:shoe_app_assigment/views/components/qoutes_container/quoteWidget.dart';
 import 'package:shoe_app_assigment/views/components/recommended_products/recommended_products_widget.dart';
 import 'package:shoe_app_assigment/views/components/reusable_text/reusable_text.dart';
@@ -120,8 +121,17 @@ class _HomeScreenState extends State<HomeScreen> {
             //second carousel slider
             carousel_slider_sales(),
 
-            const SizedBox(height: TSizes.defaultSpace,),
+            const SizedBox(height: TSizes.defaultSpace),
             QuoteWidget(),
+
+            const SizedBox(height: TSizes.defaultSpace),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: TSizes.defaultSpace,
+              ),
+              child: const FeaturedProductsWidget(),
+            ),
           ],
         ),
       ),
