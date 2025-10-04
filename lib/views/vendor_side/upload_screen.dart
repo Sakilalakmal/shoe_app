@@ -38,6 +38,8 @@ class _UploadScreenState extends State<UploadScreen> {
   int? discount;
   int? quantity;
   String? shoeDescription;
+    // Featured checkbox state
+    bool _isFeatured = false;
 
   @override
   void initState() {
@@ -106,6 +108,7 @@ class _UploadScreenState extends State<UploadScreen> {
         'shoeSizes': _sizesList,
         'shoeImages': _imageUrls,
         'vendorId': FirebaseAuth.instance.currentUser!.uid,
+          'featured': _isFeatured,
       });
       setState(() {
         _isLoading = false;
@@ -113,6 +116,7 @@ class _UploadScreenState extends State<UploadScreen> {
         _imageUrls.clear();
         images.clear();
         _sizesList.clear();
+          _isFeatured = false;
       });
     }
 
@@ -153,6 +157,23 @@ class _UploadScreenState extends State<UploadScreen> {
                         icon: Iconsax.document5,
                       ),
                       const SizedBox(height: 20),
+                        // Featured Checkbox
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isFeatured,
+                              onChanged: (val) {
+                                setState(() {
+                                  _isFeatured = val ?? false;
+                                });
+                              },
+                            ),
+                            const Text(
+                              'Featured',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
                       Row(
                         children: [
                           Expanded(
