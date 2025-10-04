@@ -5,6 +5,7 @@ import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/components/categories/category_item.dart';
+import 'package:shoe_app_assigment/views/components/featured_products/featured_products_widget.dart';
 import 'package:shoe_app_assigment/views/components/recommended_products/recommended_products_widget.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/inner_vendor_store.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/widget/vendro_card.dart';
@@ -53,10 +54,9 @@ class StoreScreen extends StatelessWidget {
               //popular product sections
               //for now i set recommended product for here
               const SizedBox(height: TSizes.defaultSpace),
-              Text(
-                "Popular Shoes",
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
+              
+              // Featured Products Widget
+              const FeaturedProductsWidget(),
             ],
           ),
         ),
@@ -134,7 +134,7 @@ class StoreScreen extends StatelessWidget {
                       TSizes.vendorCardHeight +
                       40, // UPDATED: Added height for new buttons
                   child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
+                    scrollDirection: Axis.vertical,
                     itemCount: snapshot.data!.docs.length,
                     shrinkWrap: true,
                     physics: ScrollPhysics(),
