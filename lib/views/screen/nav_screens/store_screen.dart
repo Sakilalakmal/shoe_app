@@ -6,7 +6,6 @@ import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/components/categories/category_item.dart';
 import 'package:shoe_app_assigment/views/components/featured_products/featured_products_widget.dart';
-import 'package:shoe_app_assigment/views/components/recommended_products/recommended_products_widget.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/inner_vendor_store.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/widget/vendro_card.dart';
 
