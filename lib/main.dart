@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       initialBinding: BindingsBuilder(() {
         Get.put<CategoryController>(CategoryController());
         Get.put<ConnectivityController>(ConnectivityController());
-      }),
+      }), 
     );
   }
 }
