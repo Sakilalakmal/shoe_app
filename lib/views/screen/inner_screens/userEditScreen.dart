@@ -84,19 +84,52 @@ class _UserEditScreenState extends State<UserEditScreen> {
 
   Future<void> _pickImage() async {
     try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 800,
-        maxHeight: 800,
-        imageQuality: 85,
+      // Show dialog to choose between camera and gallery
+      final ImageSource? source = await showDialog<ImageSource>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Select Image Source'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Iconsax.camera),
+                  title: const Text('Camera'),
+                  onTap: () => Navigator.pop(context, ImageSource.camera),
+                ),
+                ListTile(
+                  leading: const Icon(Iconsax.gallery),
+                  title: const Text('Gallery'),
+                  onTap: () => Navigator.pop(context, ImageSource.gallery),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+            ],
+          );
+        },
       );
 
-      if (image != null) {
-        setState(() {
-          _selectedImage = File(image.path);
-          _isUploadingImage = true;
-        });
-        await _uploadImageAndUpdateProfile();
+      if (source != null) {
+        final XFile? image = await _picker.pickImage(
+          source: source,
+          maxWidth: 800,
+          maxHeight: 800,
+          imageQuality: 85,
+        );
+
+        if (image != null) {
+          setState(() {
+            _selectedImage = File(image.path);
+            _isUploadingImage = true;
+          });
+          await _uploadImageAndUpdateProfile();
+        }
       }
     } catch (e) {
       _showSnackBar('Error selecting image', isError: true);
