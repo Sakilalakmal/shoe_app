@@ -8,7 +8,13 @@ import 'package:shoe_app_assigment/utils/constants/text_string.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
+import 'package:shoe_app_assigment/views/components/notify_message/motion_toast.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/shipping_address_screen.dart';
+import 'package:shoe_app_assigment/views/screen/nav_screens/account_screen.dart';
+import 'package:shoe_app_assigment/views/screen/nav_screens/cart_screen.dart';
+import 'package:shoe_app_assigment/views/screen/nav_screens/favorite_screen.dart';
+import 'package:shoe_app_assigment/views/screen/nav_screens/home_screen.dart';
+import 'package:shoe_app_assigment/views/screen/nav_screens/store_screen.dart';
 import 'package:uuid/uuid.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
@@ -23,6 +29,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String _selectedPaymentMethod = 'stripe';
+  
+  // Bottom navigation variables
+  int _pageIndex = 3; // Start at cart index
+  final List<Widget> _pages = [
+    HomeScreen(),
+    FavoriteScreen(),
+    StoreScreen(),
+    CartScreen(),
+    AccountScreen(),
+  ];
 
   //get current user informarion
   String State = '';
@@ -69,6 +85,37 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           Texts.checkoutScreen,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: TColors.dashboardAppbarBackground,
+        unselectedItemColor: Colors.grey,
+        currentIndex: _pageIndex,
+        onTap: (value) {
+          setState(() {
+            _pageIndex = value;
+          });
+          // Navigate to selected page
+          if (value != 3) { // If not cart, navigate to that page
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => _pages[value]),
+            );
+          }
+        },
+        type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(icon: Icon(Iconsax.home), label: 'Home'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Favorite',
+          ),
+          BottomNavigationBarItem(icon: Icon(Iconsax.shop), label: 'Stores'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart_checkout),
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
+        ],
       ),
 
       body: SingleChildScrollView(
@@ -347,6 +394,10 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           'createdAt': FieldValue.serverTimestamp(),
                         });
                       }
+                      
+                      // Clear cart and show success message
+                      ref.read(cartProvider.notifier).clearCart();
+                      AppToast.success(context, 'Your order placed successfully');
                     }
                   },
                   child: Padding(
