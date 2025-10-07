@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shoe_app_assigment/provider/favorite_provider.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/components/circular_widget/circular_container.dart';
-import 'package:shoe_app_assigment/views/screen/inner_screens/product_details_screen.dart';
 
 class ProductCardWidget extends StatelessWidget {
   final String imageUrl;
@@ -14,6 +14,8 @@ class ProductCardWidget extends StatelessWidget {
   final int discount;
   final VoidCallback? onTap;
   final bool showFavorite;
+  final dynamic productData;
+  final FavoriteNotifier? favoriteNotifier;
 
   const ProductCardWidget({
     super.key,
@@ -24,6 +26,8 @@ class ProductCardWidget extends StatelessWidget {
     required this.discount,
     this.onTap,
     this.showFavorite = true,
+    this.productData,
+    this.favoriteNotifier,
   });
 
   @override
@@ -109,7 +113,11 @@ class ProductCardWidget extends StatelessWidget {
                     Positioned(
                       top: 4,
                       right: 4,
-                      child: FavoriteIcon(dark: dark),
+                      child: FavoriteIcon(
+                        dark: dark,
+                        productData: productData,
+                        favoriteNotifier: favoriteNotifier,
+                      ),
                     ),
                 ],
               ),
@@ -201,11 +209,36 @@ class ProductCardWidget extends StatelessWidget {
 }
 
 class FavoriteIcon extends StatelessWidget {
-  const FavoriteIcon({super.key, required this.dark});
+  const FavoriteIcon({
+    super.key, 
+    required this.dark,
+    this.productData,
+    this.favoriteNotifier,
+  });
   final bool dark;
+  final dynamic productData;
+  final FavoriteNotifier? favoriteNotifier;
 
   @override
   Widget build(BuildContext context) {
+    if (productData == null || favoriteNotifier == null) {
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          color: dark
+              ? TColors.black.withOpacity(0.9)
+              : TColors.white.withOpacity(0.4),
+        ),
+        child: IconButton(
+          onPressed: () {},
+          icon: const Icon(Iconsax.heart5, color: Colors.redAccent),
+        ),
+      );
+    }
+
+    final shoeId = productData['shoeId'] ?? '';
+    final isFavorite = favoriteNotifier!.favoriteShoeItem.containsKey(shoeId);
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(100),
@@ -214,8 +247,21 @@ class FavoriteIcon extends StatelessWidget {
             : TColors.white.withOpacity(0.4),
       ),
       child: IconButton(
-        onPressed: () {},
-        icon: const Icon(Iconsax.heart5, color: Colors.redAccent),
+        onPressed: () {
+          favoriteNotifier!.toggleFavorite(
+            shoeId: shoeId,
+            shoeName: productData['shoeName'] ?? 'Unknown Shoe',
+            imageUrl: List<String>.from(productData['shoeImages'] ?? []),
+            shoePrice: (productData['shoePrice'] ?? 0).toInt(),
+            shoeSizes: List<String>.from(productData['shoeSizes'] ?? []),
+            discount: productData['discount'] ?? 0,
+            brandName: productData['brandName'] ?? 'Unknown Brand',
+          );
+        },
+        icon: Icon(
+          isFavorite ? Iconsax.heart5 : Iconsax.heart,
+          color: isFavorite ? Colors.redAccent : Colors.grey,
+        ),
       ),
     );
   }

@@ -1,18 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shoe_app_assigment/provider/favorite_provider.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/components/circular_widget/circular_container.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/product_details_screen.dart';
 
-class RecommendedProductsWidget extends StatelessWidget {
+class RecommendedProductsWidget extends ConsumerWidget {
   const RecommendedProductsWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final dark = HelperFunctions.isDarkMode(context);
+    final favoriteNotifier = ref.read(favoriteProvider.notifier);
+    ref.watch(favoriteProvider);
 
     final Stream<QuerySnapshot> _productsStream = FirebaseFirestore.instance
         .collection('shoes')
@@ -136,7 +140,11 @@ class RecommendedProductsWidget extends StatelessWidget {
                               Positioned(
                                 top: 0,
                                 right: 0,
-                                child: FavoriteIcon(dark: dark),
+                                child: FavoriteIcon(
+                                  dark: dark,
+                                  productData: productData.data(),
+                                  favoriteNotifier: favoriteNotifier,
+                                ),
                               ),
                             ],
                           ),
@@ -237,12 +245,37 @@ class RecommendedProductsWidget extends StatelessWidget {
 }
 
 class FavoriteIcon extends StatelessWidget {
-  const FavoriteIcon({super.key, required this.dark});
+  const FavoriteIcon({
+    super.key, 
+    required this.dark,
+    this.productData,
+    this.favoriteNotifier,
+  });
 
   final bool dark;
+  final dynamic productData;
+  final FavoriteNotifier? favoriteNotifier;
 
   @override
   Widget build(BuildContext context) {
+    if (productData == null || favoriteNotifier == null) {
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          color: dark
+              ? TColors.black.withOpacity(0.9)
+              : TColors.white.withOpacity(0.4),
+        ),
+        child: IconButton(
+          onPressed: () {},
+          icon: const Icon(Iconsax.heart5, color: Colors.redAccent),
+        ),
+      );
+    }
+
+    final shoeId = productData['shoeId'] ?? '';
+    final isFavorite = favoriteNotifier!.favoriteShoeItem.containsKey(shoeId);
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(100),
@@ -251,8 +284,21 @@ class FavoriteIcon extends StatelessWidget {
             : TColors.white.withOpacity(0.4),
       ),
       child: IconButton(
-        onPressed: () {},
-        icon: const Icon(Iconsax.heart5, color: Colors.redAccent),
+        onPressed: () {
+          favoriteNotifier!.toggleFavorite(
+            shoeId: shoeId,
+            shoeName: productData['shoeName'] ?? 'Unknown Shoe',
+            imageUrl: List<String>.from(productData['shoeImages'] ?? []),
+            shoePrice: (productData['shoePrice'] ?? 0).toInt(),
+            shoeSizes: List<String>.from(productData['shoeSizes'] ?? []),
+            discount: productData['discount'] ?? 0,
+            brandName: productData['brandName'] ?? 'Unknown Brand',
+          );
+        },
+        icon: Icon(
+          isFavorite ? Iconsax.heart5 : Iconsax.heart,
+          color: isFavorite ? Colors.redAccent : Colors.grey,
+        ),
       ),
     );
   }

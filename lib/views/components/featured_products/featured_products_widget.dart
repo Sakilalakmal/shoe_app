@@ -1,18 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shoe_app_assigment/provider/favorite_provider.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/components/product_card_widget/product_card_widget.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/product_details_screen.dart';
 
-class FeaturedProductsWidget extends StatelessWidget {
+class FeaturedProductsWidget extends ConsumerWidget {
   const FeaturedProductsWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = HelperFunctions.isDarkMode(context);
+    final favoriteNotifier = ref.read(favoriteProvider.notifier);
+    ref.watch(favoriteProvider);
     
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -107,6 +111,8 @@ class FeaturedProductsWidget extends StatelessWidget {
                       );
                     },
                     showFavorite: true,
+                    productData: shoeData,
+                    favoriteNotifier: favoriteNotifier,
                   );
                 },
               ),
