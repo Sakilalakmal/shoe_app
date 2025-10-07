@@ -6,6 +6,8 @@ import 'package:shoe_app_assigment/utils/constants/text_string.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
+import 'package:shoe_app_assigment/views/screen/main_screen.dart';
+import 'package:shoe_app_assigment/views/screen/nav_screens/store_screen.dart';
 
 class FavoriteScreen extends ConsumerWidget {
   const FavoriteScreen({super.key});
@@ -177,7 +179,7 @@ class FavoriteScreen extends ConsumerWidget {
     return ListView.builder(
       itemCount: wishItemData.length,
       padding: const EdgeInsets.all(TSizes.md),
-      physics: const BouncingScrollPhysics(), // ENHANCED: Better scroll physics
+      physics: const BouncingScrollPhysics(), 
       itemBuilder: (context, index) {
         final wishItem = wishItemData.values.toList()[index];
         return Container(
@@ -216,9 +218,9 @@ class FavoriteScreen extends ConsumerWidget {
           ),
         ],
       ),
-      child: IntrinsicHeight( // FIXED: Use IntrinsicHeight to handle row height properly
+      child: IntrinsicHeight( 
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch, // FIXED: Stretch to full height
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // MODERN Image Section
             Container(
@@ -280,7 +282,7 @@ class FavoriteScreen extends ConsumerWidget {
                     ),
                   ),
 
-                  // MODERN Discount Badge
+                  
                   if (wishItem.discount > 0)
                     Positioned(
                       top: TSizes.xs,
@@ -320,7 +322,7 @@ class FavoriteScreen extends ConsumerWidget {
               ),
             ),
 
-            // MODERN Product Info Section
+           
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(
@@ -586,7 +588,14 @@ class FavoriteScreen extends ConsumerWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
                   onTap: () {
-                    // Navigate to home or shop
+                    // Navigate to MainScreen with Home tab selected (index 0)
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MainScreen(initialTab: 0),
+                      ),
+                      (route) => false, // Remove all previous routes
+                    );
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(

@@ -84,6 +84,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
 
   Future<void> _pickImage() async {
     try {
+<<<<<<< HEAD
       // Show action sheet to choose between camera and gallery
       final ImageSource? source = await showModalBottomSheet<ImageSource>(
         context: context,
@@ -247,6 +248,35 @@ class _UserEditScreenState extends State<UserEditScreen> {
                 ],
               ),
             ),
+=======
+      // Show dialog to choose between camera and gallery
+      final ImageSource? source = await showDialog<ImageSource>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Select Image Source'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Iconsax.camera),
+                  title: const Text('Camera'),
+                  onTap: () => Navigator.pop(context, ImageSource.camera),
+                ),
+                ListTile(
+                  leading: const Icon(Iconsax.gallery),
+                  title: const Text('Gallery'),
+                  onTap: () => Navigator.pop(context, ImageSource.gallery),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+            ],
+>>>>>>> 0ee83ed1c351acf203ad80fc116db79344346e70
           );
         },
       );

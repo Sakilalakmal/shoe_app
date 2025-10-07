@@ -8,12 +8,16 @@ import 'package:shoe_app_assigment/views/screen/nav_screens/home_screen.dart';
 import 'package:shoe_app_assigment/views/screen/nav_screens/store_screen.dart';
 
 class MainScreen extends StatefulWidget {
+  final int initialTab;
+  
+  const MainScreen({super.key, this.initialTab = 0});
+
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _pageIndex = 0;
+  late int _pageIndex;
   final List<Widget> _pages = [
     HomeScreen(),
     FavoriteScreen(),
@@ -21,6 +25,12 @@ class _MainScreenState extends State<MainScreen> {
     CartScreen(),
     AccountScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pageIndex = widget.initialTab;
+  }
 
   @override
   Widget build(BuildContext context) {

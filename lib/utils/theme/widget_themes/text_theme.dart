@@ -15,8 +15,12 @@ class TTextTheme {
     headlineMedium: GoogleFonts.poppins(fontSize: 18.0, fontWeight: FontWeight.w700, color: TColors.dark),
     headlineSmall: GoogleFonts.poppins(fontSize: 18.0, fontWeight: FontWeight.normal, color: TColors.dark),
     titleLarge: GoogleFonts.poppins(fontSize: 14.0, fontWeight: FontWeight.w600, color: TColors.dark),
+    titleMedium: GoogleFonts.poppins(fontSize: 12.0, fontWeight: FontWeight.w500, color: TColors.dark),
+    titleSmall: GoogleFonts.poppins(fontSize: 10.0, fontWeight: FontWeight.w400, color: TColors.dark),
     bodyLarge: GoogleFonts.poppins(fontSize: 14.0, fontWeight: FontWeight.bold,color: TColors.dark),
     bodyMedium: GoogleFonts.poppins(fontSize: 14.0, color: TColors.dark.withValues(alpha: 0.8)),
+    bodySmall: GoogleFonts.poppins(fontSize: 12.0, color: TColors.dark.withValues(alpha: 0.7)),
+    labelLarge: GoogleFonts.poppins(fontSize: 12.0, fontWeight: FontWeight.w500, color: TColors.dark),
   );
 
   /* -- Dark Text Theme -- */
@@ -27,7 +31,11 @@ class TTextTheme {
     headlineMedium: GoogleFonts.poppins(fontSize: 18.0, fontWeight: FontWeight.w700, color: TColors.white),
     headlineSmall: GoogleFonts.poppins(fontSize: 18.0, fontWeight: FontWeight.normal, color: TColors.white),
     titleLarge: GoogleFonts.poppins(fontSize: 14.0, fontWeight: FontWeight.w600, color: TColors.white),
+    titleMedium: GoogleFonts.poppins(fontSize: 12.0, fontWeight: FontWeight.w500, color: TColors.white),
+    titleSmall: GoogleFonts.poppins(fontSize: 10.0, fontWeight: FontWeight.w400, color: TColors.white),
     bodyLarge: GoogleFonts.poppins(fontSize: 14.0, fontWeight: FontWeight.bold, color: TColors.white),
     bodyMedium: GoogleFonts.poppins(fontSize: 14.0, color: TColors.white.withValues(alpha: 0.8)),
+    bodySmall: GoogleFonts.poppins(fontSize: 12.0, color: TColors.white.withValues(alpha: 0.7)),
+    labelLarge: GoogleFonts.poppins(fontSize: 12.0, fontWeight: FontWeight.w500, color: TColors.white),
   );
 }

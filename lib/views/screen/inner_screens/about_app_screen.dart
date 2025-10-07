@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shoe_app_assigment/controllers/connectivity_controller/connectivity_controller.dart';
 import 'package:shoe_app_assigment/model/app_about_info/about_us_info.dart';
 import 'package:shoe_app_assigment/provider/app_info_provider.dart';
 import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
@@ -57,11 +59,82 @@ class _AboutAppScreenState extends ConsumerState<AboutAppScreen>
   Widget build(BuildContext context) {
     final dark = HelperFunctions.isDarkMode(context);
     final appInfoState = ref.watch(appInfoProvider);
+    final connectivityController = Get.find<ConnectivityController>();
 
     return Scaffold(
       backgroundColor: dark ? TColors.darkBackground : TColors.lightBackground,
       appBar: _buildModernAppBar(context, dark),
-      body: _buildBody(context, appInfoState, dark),
+      body: Column(
+        children: [
+          // Offline indicator
+          Obx(() => !connectivityController.isConnected.value
+              ? Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: TSizes.md,
+                    vertical: TSizes.sm,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        TColors.warning.withOpacity(0.9),
+                        TColors.error.withOpacity(0.8),
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: TColors.warning.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Iconsax.wifi_square,
+                        color: TColors.white,
+                        size: TSizes.iconMd,
+                      ),
+                      const SizedBox(width: TSizes.sm),
+                      Expanded(
+                        child: Text(
+                          'You are offline - Showing app information',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: TColors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: TSizes.sm,
+                          vertical: TSizes.xs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: TColors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(TSizes.cardRadiusXs),
+                        ),
+                        child: Text(
+                          'OFFLINE',
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: TColors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink()),
+          
+          // Main body content
+          Expanded(
+            child: _buildBody(context, appInfoState, dark),
+          ),
+        ],
+      ),
     );
   }
 
@@ -116,14 +189,32 @@ class _AboutAppScreenState extends ConsumerState<AboutAppScreen>
             ),
             const SizedBox(width: TSizes.sm),
             Flexible(
-              child: Text(
-                'About App',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: dark ? TColors.textDarkPrimary : TColors.textPrimary,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
+              child: Obx(() {
+                final connectivityController = Get.find<ConnectivityController>();
+                final isOffline = !connectivityController.isConnected.value;
+                
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'About App',
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: dark ? TColors.textDarkPrimary : TColors.textPrimary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (isOffline)
+                      Text(
+                        'Offline Mode',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: TColors.warning,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                  ],
+                );
+              }),
             ),
           ],
         ),
