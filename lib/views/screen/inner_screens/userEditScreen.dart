@@ -84,19 +84,188 @@ class _UserEditScreenState extends State<UserEditScreen> {
 
   Future<void> _pickImage() async {
     try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 800,
-        maxHeight: 800,
-        imageQuality: 85,
+      // Show action sheet to choose between camera and gallery
+      final ImageSource? source = await showModalBottomSheet<ImageSource>(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          final isDark = HelperFunctions.isDarkMode(context);
+          return Container(
+            decoration: BoxDecoration(
+              color: isDark ? TColors.darkerGrey : TColors.white,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(TSizes.cardRadiusLg),
+                topRight: Radius.circular(TSizes.cardRadiusLg),
+              ),
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.symmetric(vertical: TSizes.sm),
+                    decoration: BoxDecoration(
+                      color: TColors.darkGrey,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(TSizes.md),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Select Image Source',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? TColors.white : TColors.black,
+                          ),
+                        ),
+                        const SizedBox(height: TSizes.spaceBtwItems),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => Navigator.pop(context, ImageSource.camera),
+                                child: Container(
+                                  padding: const EdgeInsets.all(TSizes.lg),
+                                  decoration: BoxDecoration(
+                                    color: TColors.newBlue.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
+                                    border: Border.all(
+                                      color: TColors.newBlue.withOpacity(0.3),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(TSizes.md),
+                                        decoration: BoxDecoration(
+                                          color: TColors.newBlue,
+                                          borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
+                                        ),
+                                        child: Icon(
+                                          Iconsax.camera,
+                                          color: TColors.white,
+                                          size: TSizes.iconLg,
+                                        ),
+                                      ),
+                                      const SizedBox(height: TSizes.sm),
+                                      Text(
+                                        'Camera',
+                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: TColors.newBlue,
+                                        ),
+                                      ),
+                                      const SizedBox(height: TSizes.xs),
+                                      Text(
+                                        'Take a new photo',
+                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                          color: TColors.textSecondary,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: TSizes.md),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => Navigator.pop(context, ImageSource.gallery),
+                                child: Container(
+                                  padding: const EdgeInsets.all(TSizes.lg),
+                                  decoration: BoxDecoration(
+                                    color: TColors.success.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
+                                    border: Border.all(
+                                      color: TColors.success.withOpacity(0.3),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(TSizes.md),
+                                        decoration: BoxDecoration(
+                                          color: TColors.success,
+                                          borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
+                                        ),
+                                        child: Icon(
+                                          Iconsax.gallery,
+                                          color: TColors.white,
+                                          size: TSizes.iconLg,
+                                        ),
+                                      ),
+                                      const SizedBox(height: TSizes.sm),
+                                      Text(
+                                        'Gallery',
+                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: TColors.success,
+                                        ),
+                                      ),
+                                      const SizedBox(height: TSizes.xs),
+                                      Text(
+                                        'Choose from library',
+                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                          color: TColors.textSecondary,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: TSizes.md),
+                        SizedBox(
+                          width: double.infinity,
+                          child: TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: TSizes.md),
+                            ),
+                            child: Text(
+                              'Cancel',
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                color: TColors.darkGrey,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       );
 
-      if (image != null) {
-        setState(() {
-          _selectedImage = File(image.path);
-          _isUploadingImage = true;
-        });
-        await _uploadImageAndUpdateProfile();
+      if (source != null) {
+        final XFile? image = await _picker.pickImage(
+          source: source,
+          maxWidth: 800,
+          maxHeight: 800,
+          imageQuality: 85,
+        );
+
+        if (image != null) {
+          setState(() {
+            _selectedImage = File(image.path);
+            _isUploadingImage = true;
+          });
+          await _uploadImageAndUpdateProfile();
+        }
       }
     } catch (e) {
       _showSnackBar('Error selecting image', isError: true);
