@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shoe_app_assigment/provider/favorite_provider.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/product_details_screen.dart';
 
-class vendorProductCard extends StatelessWidget {
+class vendorProductCard extends ConsumerWidget {
   const vendorProductCard({
     super.key,
     required Stream<QuerySnapshot<Object?>> vendorProductStream,
@@ -16,7 +18,9 @@ class vendorProductCard extends StatelessWidget {
   final bool dark;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoriteNotifier = ref.read(favoriteProvider.notifier);
+    ref.watch(favoriteProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -188,20 +192,10 @@ class vendorProductCard extends StatelessWidget {
                                         Positioned(
                                           top: TSizes.sm,
                                           right: TSizes.sm,
-                                          child: Container(
-                                            width: 32,
-                                            height: 32,
-                                            decoration: BoxDecoration(
-                                              color: dark
-                                                  ? TColors.black.withOpacity(0.8)
-                                                  : TColors.white.withOpacity(0.8),
-                                              borderRadius: BorderRadius.circular(100),
-                                            ),
-                                            child: Icon(
-                                              Iconsax.heart,
-                                              size: 16,
-                                              color: TColors.error,
-                                            ),
+                                          child: VendorFavoriteIcon(
+                                            dark: dark,
+                                            productData: productData.data() as Map<String, dynamic>,
+                                            favoriteNotifier: favoriteNotifier,
                                           ),
                                         ),
                                       ],
@@ -296,6 +290,54 @@ class vendorProductCard extends StatelessWidget {
               );
             },
           ),
+    );
+  }
+}
+
+class VendorFavoriteIcon extends StatelessWidget {
+  const VendorFavoriteIcon({
+    super.key,
+    required this.dark,
+    required this.productData,
+    required this.favoriteNotifier,
+  });
+
+  final bool dark;
+  final Map<String, dynamic> productData;
+  final FavoriteNotifier favoriteNotifier;
+
+  @override
+  Widget build(BuildContext context) {
+    final shoeId = productData['shoeId'] ?? '';
+    final isFavorite = favoriteNotifier.favoriteShoeItem.containsKey(shoeId);
+
+    return GestureDetector(
+      onTap: () {
+        favoriteNotifier.toggleFavorite(
+          shoeId: shoeId,
+          shoeName: productData['shoeName'] ?? 'Unknown Shoe',
+          imageUrl: List<String>.from(productData['shoeImages'] ?? []),
+          shoePrice: (productData['shoePrice'] ?? 0).toInt(),
+          shoeSizes: List<String>.from(productData['shoeSizes'] ?? []),
+          discount: productData['discount'] ?? 0,
+          brandName: productData['brandName'] ?? 'Unknown Brand',
+        );
+      },
+      child: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: dark
+              ? TColors.black.withOpacity(0.8)
+              : TColors.white.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: Icon(
+          isFavorite ? Iconsax.heart5 : Iconsax.heart,
+          size: 16,
+          color: isFavorite ? TColors.error : TColors.darkGrey,
+        ),
+      ),
     );
   }
 }
