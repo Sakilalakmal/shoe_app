@@ -11,6 +11,7 @@ import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/components/notify_message/motion_toast.dart';
+import 'package:shoe_app_assigment/views/vendor_side/main_vendor_screen.dart';
 
 class EditVendorProfileScreen extends StatefulWidget {
   const EditVendorProfileScreen({super.key});
@@ -562,7 +563,13 @@ class _EditVendorProfileScreenState extends State<EditVendorProfileScreen> {
       ),
       leading: IconButton(
         icon: const Icon(Iconsax.arrow_left),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const MainVendorScreen()),
+            (route) => false,
+          );
+        },
       ),
       backgroundColor: isDark ? TColors.dark : TColors.white,
       elevation: 0,

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shoe_app_assigment/utils/constants/text_string.dart';
 import 'package:shoe_app_assigment/views/screen/inner_screens/widget/VendorOrderCard.dart';
+import 'package:shoe_app_assigment/views/vendor_side/main_vendor_screen.dart';
 
 class VendorOrderScreen extends StatefulWidget {
   const VendorOrderScreen({super.key});
@@ -25,6 +26,16 @@ class _VendorOrderScreenState extends State<VendorOrderScreen> {
         title: Text(
           Texts.myOrders,
           style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainVendorScreen()),
+              (route) => false,
+            );
+          },
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(

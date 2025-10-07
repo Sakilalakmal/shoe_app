@@ -10,6 +10,7 @@ import 'package:shoe_app_assigment/utils/helpers/helper_functions.dart';
 import 'package:shoe_app_assigment/utils/theme/colors.dart';
 import 'package:shoe_app_assigment/utils/theme/sizes.dart';
 import 'package:shoe_app_assigment/views/components/notify_message/motion_toast.dart';
+import 'package:shoe_app_assigment/views/vendor_side/main_vendor_screen.dart';
 import 'package:uuid/uuid.dart';
 
 class UploadScreen extends StatefulWidget {
@@ -136,6 +137,16 @@ class _UploadScreenState extends State<UploadScreen> {
           style: Theme.of(
             context,
           ).textTheme.headlineMedium!.copyWith(fontSize: 20),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainVendorScreen()),
+              (route) => false,
+            );
+          },
         ),
       ),
       body: SafeArea(
