@@ -1,3 +1,5 @@
+<img width="1475" height="675" alt="sneakerX" src="https://github.com/user-attachments/assets/a6965696-495d-4f5e-bd39-5fcc65f3a4ec" />
+
 # SneakerX 👟
 
 An advanced, feature-rich Sneaker E-commerce Application built with Flutter, Firebase, GetX, and Riverpod. Designed to provide a seamless shopping experience with features like product discovery, secure user authentication, real-time data sync, and a modern, responsive UI.
