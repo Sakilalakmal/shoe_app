@@ -48,7 +48,7 @@ Follow these steps to set up the project locally.
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/your-username/shoe_app_assigment.git
+    git clone https://github.com/sakilalakmal/shoe_app_assigment.git
     cd shoe_app_assigment
     ```
 
@@ -107,3 +107,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 This project is proprietary and confidential.
 
 Made with ❤️ by **Sakila Lakmal**
+
