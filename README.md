@@ -1,4 +1,4 @@
-<img width="1475" height="675" alt="sneakerX" src="https://github.com/user-attachments/assets/a6965696-495d-4f5e-bd39-5fcc65f3a4ec" />
+<img width="1475" height="675" alt="sneakerX" src="https://github.com/user-attachments/assets/1a6beed2-dcd5-4d21-b2f8-1ef1dc1e804a" />
 
 # SneakerX 👟
 
