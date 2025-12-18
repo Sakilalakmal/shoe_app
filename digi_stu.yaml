@@ -1,0 +1,467 @@
+AWSTemplateFormatVersion: '2010-09-09'   # CloudFormation template format version
+Description: Free-tier friendly digiwork_studio demo (VPC + EC2 ASG + RDS + S3 [+optional EFS/CloudFront])
+# -----------------------------------------------------------------------------
+# DigiWork Studio - annotated CloudFormation template
+# - NOTE: This is the user-provided template you asked to preserve, renamed to
+#   digiwork_studio and adjusted so it should deploy without manual edits.
+# - Key change: ProjectName default -> "digiwork_studio" and S3 bucket name made
+#   unique using AWS::AccountId and AWS::Region to avoid global name collisions.
+# - Keep in mind: This template is demo/lab oriented (RDS is placed in public
+#   subnets for simplicity). For production, move RDS to private subnets, add
+#   proper backup/retention/security hardening, and tighten IAM permissions.
+# -----------------------------------------------------------------------------
+
+#
+# PARAMETERS: inputs you can override during stack creation
+#
+Parameters:
+  ProjectName:
+    Type: String
+    Default: digiwork_studio
+    # Short identifier used in tags and generated resource names. Keep lower-case.
+  VPCCIDR:
+    Type: String
+    Default: 10.0.0.0/16
+    # CIDR for the VPC used by the stack.
+  PublicSubnetACIDR:
+    Type: String
+    Default: 10.0.3.0/24
+    # CIDR for first public subnet (AZ 1).
+  PublicSubnetBCIDR:
+    Type: String
+    Default: 10.0.4.0/24
+    # CIDR for second public subnet (AZ 2).
+  EC2InstanceType:
+    Type: String
+    Default: t3.micro
+    # Instance type for web servers (free-tier friendly default).
+  DBUsername:
+    Type: String
+    Default: appuser
+    MinLength: 1
+    # RDS master username.
+  DBPassword:
+    Type: String
+    NoEcho: true
+    MinLength: 8
+    # RDS master password (NoEcho hides it in the console).
+  DBAllocatedStorage:
+    Type: Number
+    Default: 20
+    # Allocated storage (GB) for RDS.
+  DBInstanceClass:
+    Type: String
+    Default: db.t3.micro
+    # RDS instance class (free-tier friendly).
+  CreateEFS:
+    Type: String
+    AllowedValues: ["true","false"]
+    Default: "false"
+    # Toggle to provision EFS (shared file system).
+  EnableCloudFront:
+    Type: String
+    AllowedValues: ["true","false"]
+    Default: "false"
+    # Toggle to provision CloudFront in front of the S3 bucket.
+  AL2023Ami:
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64
+    # SSM parameter path for the latest Amazon Linux 2023 AMI in the region.
+
+#
+# CONDITIONS: decide whether to create optional resources
+#
+Conditions:
+  UseEFS: !Equals [!Ref CreateEFS, "true"]
+  UseCF: !Equals [!Ref EnableCloudFront, "true"]
+
+#
+# RESOURCES: networking, compute, storage, and optional services
+#
+Resources:
+
+  # ----------------------
+  # Networking: VPC, Subnets, IGW, Route Table
+  # ----------------------
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VPCCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-vpc'
+    # VPC: primary private network for the stack.
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-igw'
+    # InternetGateway: permits internet connectivity for public subnets.
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+    # Attach IGW to the VPC.
+
+  PublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [0, !GetAZs '']   # First AZ in region
+      CidrBlock: !Ref PublicSubnetACIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-public-a'
+    # PublicSubnetA: public subnet in AZ1; instances launched here get public IPs.
+
+  PublicSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [1, !GetAZs '']   # Second AZ in region
+      CidrBlock: !Ref PublicSubnetBCIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-public-b'
+    # PublicSubnetB: public subnet in AZ2 for redundancy.
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-public-rt'
+    # Route table intended for public subnets.
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+    # Default route (0.0.0.0/0) pointing to the internet gateway.
+
+  PublicSubnetARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref PublicRouteTable
+    # Attach route table to subnet A.
+
+  PublicSubnetBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetB
+      RouteTableId: !Ref PublicRouteTable
+    # Attach route table to subnet B.
+
+  # ----------------------
+  # Security Groups
+  # ----------------------
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP inbound; all outbound
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-web-sg'
+    # Security group for web servers; allows HTTP (port 80) from anywhere.
+
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow MySQL from web instances
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref InstanceSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-rds-sg'
+    # RDS security group: only allows MySQL traffic from EC2 instances in InstanceSecurityGroup.
+
+  EFSSecurityGroup:
+    Condition: UseEFS
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow NFS from web instances
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 2049
+          ToPort: 2049
+          SourceSecurityGroupId: !Ref InstanceSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-efs-sg'
+    # EFSSecurityGroup: created only when EFS is enabled; allows NFS traffic from web SG.
+
+  # ----------------------
+  # S3 bucket for static assets (unique name using account & region)
+  # ----------------------
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+     
+      BucketName: !Sub '${ProjectName}-${AWS::AccountId}-${AWS::Region}-assets'
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+    DeletionPolicy: Retain
+    # S3Bucket: stores index.html and other static assets. Retain prevents deletion with stack removal.
+
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyNonTLS
+            Effect: Deny
+            Principal: "*"
+            Action: "s3:*"
+            Resource:
+              - !Sub '${S3Bucket.Arn}'
+              - !Sub '${S3Bucket.Arn}/*'
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+    # S3BucketPolicy: denies any non-TLS (HTTP) requests to the bucket — enforces HTTPS usage.
+
+  # ----------------------
+  # IAM Role & InstanceProfile for EC2 instances
+  # ----------------------
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+      Policies:
+        - PolicyName: ExtraAppAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "elasticfilesystem:ClientMount"
+                  - "elasticfilesystem:ClientWrite"
+                  - "elasticfilesystem:Describe*"
+                Resource: "*"
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-ec2-role'
+    # ExecutionRole: grants EC2 instances SSM and S3 read access, plus EFS actions when needed.
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref ExecutionRole
+    # InstanceProfile: used to attach the IAM role to EC2 instances via LaunchTemplate.
+
+  # ----------------------
+  # Launch Template (EC2 bootstrap + S3 fetch + optional EFS mount)
+  # ----------------------
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        IamInstanceProfile:
+          Arn: !GetAtt InstanceProfile.Arn
+        ImageId: !Ref AL2023Ami
+        InstanceType: !Ref EC2InstanceType
+        SecurityGroupIds:
+          - !Ref InstanceSecurityGroup
+        UserData:
+          Fn::Base64:
+            Fn::Sub:
+              - |
+                #!/bin/bash
+                set -e
+                dnf -y update
+                dnf -y install nginx awscli
+                systemctl enable --now nginx
+                # Pull index.html from the S3 bucket into nginx's default HTML directory.
+                aws s3 cp s3://${S3BucketName}/index.html /usr/share/nginx/html/index.html
+                # Create a simple health file that can be used by load balancers or health checks.
+                echo 'ok' > /usr/share/nginx/html/health
+                ${EFS_MOUNT_BLOCK}
+              - 
+                S3BucketName: !Ref S3Bucket
+                # EFS_MOUNT_BLOCK is injected only if UseEFS is true. This installs EFS utils and mounts EFS.
+                EFS_MOUNT_BLOCK: !If
+                  - UseEFS
+                  - !Sub |
+                      dnf -y install amazon-efs-utils
+                      mkdir -p /mnt/efs
+                      echo "${EFSFileSystem}.efs.${AWS::Region}.amazonaws.com:/ /mnt/efs efs _netdev,noresvport 0 0" >> /etc/fstab
+                      mount -a -t efs defaults
+                  - ''
+    # LaunchTemplate: defines EC2 configuration and bootstrapping behavior.
+
+  # ----------------------
+  # Auto Scaling Group
+  # ----------------------
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+        - !Ref PublicSubnetA
+        - !Ref PublicSubnetB
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt LaunchTemplate.LatestVersionNumber
+      MinSize: '2'
+      MaxSize: '2'
+      DesiredCapacity: '2'
+      HealthCheckType: EC2
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-web'
+          PropagateAtLaunch: true
+    # AutoScalingGroup: keeps two EC2 instances running across both public subnets.
+
+  # ----------------------
+  # RDS DB Subnet Group and RDS Instance (MySQL)
+  # ----------------------
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Public subnets for demo-only RDS (ok for lab)
+      SubnetIds:
+        - !Ref PublicSubnetA
+        - !Ref PublicSubnetB
+      DBSubnetGroupName: !Sub '${ProjectName}-dbsubnet'
+    # DBSubnetGroup: groups subnets where RDS can be placed. For demos it's public; production should use private subnets.
+
+  RDSInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: appdb
+      Engine: mysql
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      DBInstanceClass: !Ref DBInstanceClass
+      AllocatedStorage: !Ref DBAllocatedStorage
+      MultiAZ: false
+      PubliclyAccessible: false
+      VPCSecurityGroups:
+        - !Ref RDSSecurityGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      DeletionProtection: false
+      BackupRetentionPeriod: 7
+      AutoMinorVersionUpgrade: true
+    # RDSInstance: managed MySQL database instance; not publicly accessible.
+
+  # ----------------------
+  # Optional: EFS (Elastic File System) and mount target
+  # ----------------------
+  EFSFileSystem:
+    Condition: UseEFS
+    Type: AWS::EFS::FileSystem
+    Properties:
+      Encrypted: true
+      PerformanceMode: generalPurpose
+      FileSystemTags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-efs'
+    # EFSFileSystem: shared network filesystem (optional).
+
+  EFSMountTargetA:
+    Condition: UseEFS
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref EFSFileSystem
+      SubnetId: !Ref PublicSubnetA
+      SecurityGroups:
+        - !Ref EFSSecurityGroup
+    # EFSMountTargetA: mount target for EFS in subnet A (add more if you want AZ coverage).
+
+  # ----------------------
+  # Optional: CloudFront Origin Access Control & Distribution
+  # ----------------------
+  CFOriginAccessControl:
+    Condition: UseCF
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub '${ProjectName}-oac'
+        SigningProtocol: sigv4
+        SigningBehavior: always
+        OriginAccessControlOriginType: s3
+    # CFOriginAccessControl: configures CloudFront to access S3 securely (without making bucket public).
+
+  CloudFrontDistribution:
+    Condition: UseCF
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        PriceClass: PriceClass_100
+        Origins:
+          - Id: s3origin
+            DomainName: !GetAtt S3Bucket.RegionalDomainName
+            S3OriginConfig: {}
+            OriginAccessControlId: !Ref CFOriginAccessControl
+        DefaultCacheBehavior:
+          TargetOriginId: s3origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD]
+          CachedMethods: [GET, HEAD]
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+    # CloudFrontDistribution: optional CDN distribution to accelerate global delivery of S3 assets.
+
+#
+# OUTPUTS: values returned after stack creation (useful for automation or manual retrieval)
+#
+Outputs:
+  ASGName:
+    Description: Auto Scaling Group name
+    Value: !Ref AutoScalingGroup
+  S3BucketName:
+    Description: Asset bucket
+    Value: !Ref S3Bucket
+  RDSEndpoint:
+    Description: MySQL endpoint (hostname)
+    Value: !GetAtt RDSInstance.Endpoint.Address
+  EFSId:
+    Condition: UseEFS
+    Description: EFS filesystem ID (only when EFS created)
+    Value: !Ref EFSFileSystem
+    # Note: EFSId output appears only when CreateEFS = "true".

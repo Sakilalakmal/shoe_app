@@ -272,6 +272,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
     }
   }
 
+//* upload image and update profile
   Future<void> _uploadImageAndUpdateProfile() async {
     if (_selectedImage == null) return;
 

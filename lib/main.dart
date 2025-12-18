@@ -27,11 +27,11 @@ class MyApp extends StatelessWidget {
       darkTheme: TAppTheme.darkTheme,
       themeMode: ThemeMode.system,
 
-      home:SplashScreen(),
+      home: SplashScreen(),
       initialBinding: BindingsBuilder(() {
         Get.put<CategoryController>(CategoryController());
         Get.put<ConnectivityController>(ConnectivityController());
-      }), 
+      }),
     );
   }
 }
